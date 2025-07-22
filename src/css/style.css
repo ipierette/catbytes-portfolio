@@ -1,0 +1,711 @@
+/* Importação das fontes Google Fonts */
+/* As fontes são importadas diretamente no HTML para melhor performance */
+
+/* Variáveis CSS para a paleta de cores */
+:root {
+    --color-green-eyes: #2E8B57;
+    /* Verde Esmeralda */
+    --color-dark-gray: #36454F;
+    /* Cinza Chumbo */
+    --color-light-gray: #F8F8F8;
+    /* Off-white */
+    --color-blue-accent: #00BFFF;
+    /* Azul Elétrico */
+    --color-orange-accent: #FF8C00;
+    /* Laranja Escuro */
+    --color-green-light: #7CFC00;
+    /* Verde Limão */
+    --color-purple-accent: #8A2BE2;
+    /* Azul Violeta para destaque */
+
+    /* Variáveis para o modo claro */
+    --background-light: var(--color-light-gray);
+    --text-color-light: var(--color-dark-gray);
+    --header-bg-light: #1A202C;
+    /* gray-900 */
+    --header-text-light: #FFFFFF;
+    --card-bg-light: #FFFFFF;
+    --card-bg-dark-light: #2D3748;
+    /* gray-800 */
+    --border-color-light: #D1D5DB;
+    /* gray-300 */
+    --input-bg-light: #FFFFFF;
+    --input-text-light: #4A5568;
+    /* gray-700 */
+    --input-placeholder-light: #A0AEC0;
+    /* gray-400 */
+}
+
+/* Variáveis para o modo escuro */
+body.dark-mode {
+    --background-light: #1A202C;
+    /* gray-900 */
+    --text-color-light: #E2E8F0;
+    /* gray-200 */
+    --header-bg-light: #000000;
+    /* black */
+    --header-text-light: #FFFFFF;
+    --card-bg-light: #2D3748;
+    /* gray-800 */
+    --card-bg-dark-light: #1A202C;
+    /* gray-900 */
+    --border-color-light: #4A5568;
+    /* gray-700 */
+    --input-bg-light: #2D3748;
+    /* gray-800 */
+    --input-text-light: #E2E8F0;
+    /* gray-200 */
+    --input-placeholder-light: #718096;
+    /* gray-500 */
+}
+
+
+/* Estilos globais e reset básico */
+body {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color-light);
+    background-color: var(--background-light);
+    scroll-behavior: smooth;
+    /* Rolagem suave para âncoras */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Transição suave para o modo escuro */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Comfortaa', cursive;
+}
+
+/* Customização da barra de rolagem (WebKit) */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-light);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-green-eyes);
+    border-radius: 10px;
+    border: 3px solid var(--background-light);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #256b46;
+    /* Um tom mais escuro de verde */
+}
+
+/* Estilo para a barra de navegação sticky */
+header {
+    background-color: var(--header-bg-light);
+    color: var(--header-text-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Estilos para o menu mobile */
+#mobile-menu {
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    background-color: var(--card-bg-dark-light);
+    /* Usar cor de fundo mais escura para o menu mobile */
+}
+
+#mobile-menu.active {
+    max-height: 300px;
+    /* Altura máxima para mostrar o menu */
+    opacity: 1;
+}
+
+/* Estilos para as seções */
+section {
+    padding: 4rem 0;
+    /* Espaçamento padrão para todas as seções */
+    position: relative;
+    /* Necessário para padrões de fundo */
+    overflow: hidden;
+    /* Para garantir que animações não vazem */
+}
+
+/* Animações de Entrada para Seções */
+.section-animated>*:not(.scroll-progress-bar) {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.section-animated.is-visible>*:not(.scroll-progress-bar) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* Seção Hero */
+#hero {
+    background-size: cover;
+    background-position: center;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-image: url('../images/gato-sentado.svg');
+    background-size: 80%;
+    background-repeat: no-repeat;
+    background-position: right -30% top 100%;
+}
+
+#hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom right, rgba(248, 250, 252, 0.25), rgba(220, 225, 230, 0.15));
+    /* Overlay ainda mais claro para ver melhor a imagem de fundo */
+}
+
+#hero::after{
+    content: url('../images/seta_preta.png');
+    position: absolute;
+    height: 35px;
+    bottom: 10vh;
+    animation: downarrow 0.6s infinite alternate ease-in-out;
+}
+
+@-webkit-keyframes downarrow {
+    0% {
+        -webkit-transform: translateY(0);
+        opacity: 0.4;
+    }
+}
+
+@keyframes downarrow {
+    0% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    100% {
+        -webkit-transform: translateY(0.4em);
+        opacity: 0.9;
+    }
+}
+
+body.dark-mode #hero::before {
+    background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.8), rgba(20, 20, 20, 0.8));
+    /* Overlay mais escuro para dark mode */
+}
+
+/* Ajustes específicos para o modo escuro na seção Hero */
+body.dark-mode #hero-title {
+    color: #FFFFFF; /* Branco para o título no modo escuro */
+    text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.5); /* Sombra branca para contraste */
+}
+
+body.dark-mode #hero p {
+    color: #E2E8F0; /* Um branco mais suave (gray-200) para o parágrafo no modo escuro */
+}
+
+#hero .relative {
+    z-index: 2;
+}
+/* Estilos para o popup do gato */
+.cat-popup {
+    position: absolute;
+    /* Ajuste a posição com base no layout da sua seção hero e onde o gato aparece */
+    bottom: 25%; /* Ajuste conforme necessário para o gato */
+    right: 15%; /* Ajuste conforme necessário para o gato */
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 15px 20px;
+    border-radius: 20px;
+    max-width: 300px; /* Largura máxima para quebrar as palavras */
+    word-wrap: break-word; /* Garante que as palavras quebrem */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: all 0.3s ease-in-out;
+    z-index: 100; /* Garante que o popup apareça acima de outros elementos */
+    font-size: 0.95rem;
+    line-height: 1.5;
+    border: 2px solid var(--color-purple-accent); /* Adiciona uma borda colorida */
+}
+
+/* Modo escuro para o popup */
+body.dark-mode .cat-popup {
+    background-color: #2D3748; /* Cor de fundo escura */
+    color: #E2E8F0; /* Cor do texto clara */
+    border-color: var(--color-green-light); /* Borda verde clara */
+}
+
+.cat-popup.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+/* Flecha do balão de fala (rabinho) */
+.cat-popup::after {
+    content: '';
+    position: absolute;
+    bottom: -15px; /* Posição da flecha */
+    right: 20%; /* Ajuste para alinhar com o gato */
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 15px solid #f0f0f0; /* Cor da flecha igual ao fundo do popup */
+    filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.2)); /* Adiciona sombra à flecha */
+}
+
+body.dark-mode .cat-popup::after {
+    border-top: 15px solid #2D3748; /* Cor da flecha no modo escuro */
+}
+
+/* Efeito de digitação */
+.typing-effect p {
+    overflow: hidden; /* Garante que o texto seja recortado antes de ser "digitado" */
+    white-space: pre-wrap; /* Preserva espaços em branco e quebra de linha */
+    margin: 0;
+    border-right: .15em solid orange; /* Cursor piscando */
+    animation: 
+        blink-caret .75s step-end infinite;
+}
+
+/* Remove o cursor piscando quando a digitação termina */
+.typing-effect.finished p {
+    border-right: none;
+}
+
+/* Animação do cursor */
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: orange; }
+}
+
+
+/* Seção Sobre Mim */
+#about {
+    background-color: var(--background-light);
+    color: var(--text-color-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#about img {
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Seção Habilidades */
+#skills {
+    background-color: var(--header-bg-light);
+    /* Usa a cor do cabeçalho para consistência */
+    color: var(--header-text-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#skills .bg-gray-800 {
+    background-color: var(--card-bg-dark-light);
+    /* Cor de fundo do card na seção de habilidades */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease;
+}
+
+#skills .bg-gray-800:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Barras de progresso estilizadas */
+#skills .w-full {
+    background-color: var(--border-color-light);
+    /* Cor de fundo da barra */
+}
+
+#skills .bg-green-500 {
+    background-color: var(--color-green-eyes);
+    /* Cor de preenchimento */
+}
+
+/* Seção Projetos - Galeria Interativa */
+#projects {
+    background-color: var(--background-light);
+    color: var(--text-color-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.project-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    /* Espaçamento entre imagem e detalhes */
+    background-color: var(--card-bg-light);
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+@media (min-width: 768px) {
+
+    .project-gallery {
+        flex-direction: row;
+        text-align: left;
+    }
+
+    .project-image-container {
+        margin-right: 1.5rem;
+        margin-bottom: 0;
+    }
+}
+
+.project-image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+}
+
+.project-details {
+    flex-grow: 1;
+}
+
+.project-navigation button {
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.project-navigation button:hover {
+    transform: scale(1.1);
+}
+
+.project-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #ccc;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.project-dot.active {
+    background-color: var(--color-green-eyes);
+    transform: scale(1.2);
+}
+
+/* Seção Curiosidades */
+#curiosities {
+    background-color: var(--header-bg-light);
+    color: var(--header-text-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#curiosities img {
+    border-radius: 0.75rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Seção IA Felina - Abas */
+#ai-features {
+    background-color: var(--background-light);
+    color: var(--text-color-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.ai-tabs {
+    background-color: var(--card-bg-light);
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ai-tabs .tab-button {
+    cursor: pointer;
+    outline: none;
+    border-bottom-width: 2px;
+    border-color: transparent;
+    color: var(--text-color-light);
+    /* text-gray-600 */
+    transition: all 0.3s ease;
+}
+
+.ai-tabs .tab-button.active-tab {
+    border-color: var(--color-green-eyes);
+    /* Cor ativa padrão */
+    color: var(--color-green-eyes);
+    /* Cor ativa padrão */
+    font-weight: 700;
+}
+
+/* Sobrescrevendo cores ativas para abas específicas */
+.ai-tabs .tab-button[data-tab="identify-cat"].active-tab {
+    border-color: var(--color-purple-accent);
+    color: var(--color-purple-accent);
+}
+
+.ai-tabs .tab-button[data-tab="donate-ad"].active-tab {
+    border-color: var(--color-orange-accent);
+    color: var(--color-orange-accent);
+}
+
+
+.ai-tabs .tab-content {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.ai-tabs .tab-content.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.ai-tabs .tab-content.active-content {
+    display: block;
+    /* Garante que o conteúdo seja visível */
+    opacity: 1;
+}
+
+/* Ajuste de cores para modo escuro nas caixas de alerta da IA Felina */
+.ai-tabs .tab-content .bg-blue-100 {
+    background-color: rgba(100, 149, 237, 0.2);
+    /* CornflowerBlue com opacidade */
+    color: var(--text-color-light);
+    border-color: var(--color-blue-accent);
+}
+
+body.dark-mode .ai-tabs .tab-content .bg-blue-100 {
+    background-color: rgba(60, 90, 150, 0.4);
+    /* Azul mais escuro no modo escuro */
+    color: var(--text-color-light);
+    /* Mantém o texto claro para contraste */
+}
+
+.ai-tabs .tab-content .bg-purple-100 {
+    background-color: rgba(138, 43, 226, 0.2);
+    /* BlueViolet com opacidade */
+    color: var(--text-color-light);
+    border-color: var(--color-purple-accent);
+}
+
+body.dark-mode .ai-tabs .tab-content .bg-purple-100 {
+    background-color: rgba(80, 20, 150, 0.4);
+    /* Roxo mais escuro no modo escuro */
+    color: var(--text-color-light);
+    /* Mantém o texto claro para contraste */
+}
+
+
+/* Estilos para formulários */
+input[type="text"],
+input[type="email"],
+textarea,
+select {
+    border: 1px solid var(--border-color-light);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    background-color: var(--input-bg-light);
+    color: var(--input-text-light);
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+textarea::placeholder {
+    color: var(--input-placeholder-light);
+}
+
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color-green-eyes);
+    box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.2);
+    /* green-eyes with 20% opacity */
+    outline: none;
+}
+
+/* Estilos de botões gerais */
+button,
+.inline-block {
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease, transform 0.2s ease;
+    /* Adicionado transform para hover */
+}
+
+button:hover,
+.inline-block:hover {
+    transform: scale(1.03);
+    /* Efeito de pulso sutil */
+}
+
+/* Efeito de sublinhado para links de navegação */
+header nav ul li a {
+    position: relative;
+    text-decoration: none;
+    /* Remove sublinhado padrão */
+}
+
+header nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    bottom: -3px;
+    /* Posição do sublinhado */
+    left: 0;
+    background-color: var(--color-purple-accent);
+    /* Cor do sublinhado */
+    transition: width 0.3s ease-out;
+}
+
+header nav ul li a:hover::after {
+    width: 100%;
+}
+
+/* Estilos específicos para a seção de contato */
+#contact {
+    background-color: var(--header-bg-light);
+    color: var(--header-text-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#contact .bg-gray-800 {
+    background-color: var(--card-bg-dark-light);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#contact form button {
+    background-color: var(--color-green-eyes);
+}
+
+#contact form button:hover {
+    background-color: #256b46;
+    /* Um tom mais escuro de verde */
+}
+
+#contact a.text-gray-300:hover {
+    transform: translateY(-3px);
+}
+
+/* Botão Voltar ao Início */
+#back-to-top {
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0);
+}
+
+#back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+/* Estilos para a barra de progresso de rolagem */
+.scroll-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    /* Altura da barra */
+    background-color: var(--color-purple-accent);
+    /* Cor da barra de progresso */
+    width: 0%;
+    /* Largura inicial */
+    z-index: 100;
+    /* Garante que fique acima de outros elementos */
+    transition: width 0.2s ease-out;
+    /* Transição suave para o preenchimento */
+}
+
+body.dark-mode .scroll-progress-bar {
+    background-color: var(--color-green-eyes);
+    /* Cor da barra no modo escuro */
+}
+
+/* Padrões de Fundo Sutis */
+section:not(#hero, #contact) {
+    /* Padrão de ruído sutil */
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.01) 50%, transparent 50%),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.01) 50%, transparent 50%);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+}
+
+body.dark-mode section:not(#hero, #contact) {
+    background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.01) 50%, transparent 50%),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.01) 50%, transparent 50%);
+    background-size: 10px 10px;
+    background-position: 0 0, 5px 5px;
+}
+
+/* Melhorias na Tipografia (Text-shadow para títulos) */
+h1 {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode h1 {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    /* Aumentado para mais destaque no modo escuro */
+}
+
+h2 {
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode h2 {
+    text-shadow: 1px 1px 4px rgba(255, 253, 253, 0.712);
+    /* Aumentado para mais destaque no modo escuro */
+}
+
+/* Ajuste de cor para títulos de seções específicas no modo escuro */
+body.dark-mode #about h2,
+body.dark-mode #projects h2,
+body.dark-mode #ai-features h2 {
+    color: var(--color-purple-accent);
+    /* Cor #8A2BE2 (Azul Violeta) */
+}
+
+.catbytes-gradient {
+    background: linear-gradient(90deg, #2E8B57, #8A2BE2, #00BFFF, #2E8B57);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    filter: drop-shadow(0 0 8px #8A2BE2);
+}
+
+@keyframes gradient-move {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-gradient {
+    animation: gradient-move 3s ease-in-out infinite;
+}
+
