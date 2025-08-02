@@ -61,7 +61,17 @@ export function initSkillsCarousel() {
     let currentIndex = 0;
     const cards = carousel.querySelectorAll('.skill-card');
     const totalCards = cards.length;
-    
+    let cardWidth = 0;
+    let cardMargin = 0;
+
+    const calculateCardMetrics = () => {
+        if (cards.length === 0) return;
+        const cardElement = cards[0];
+        cardWidth = cardElement.offsetWidth;
+        const styles = window.getComputedStyle(cardElement);
+        cardMargin = parseInt(styles.marginLeft) + parseInt(styles.marginRight);
+    };
+
     const getVisibleCardsCount = () => {
         if (window.innerWidth >= 1024) return 3;
         if (window.innerWidth >= 768) return 2;
@@ -72,17 +82,13 @@ export function initSkillsCarousel() {
         if (cards.length === 0) return;
 
         const visibleCards = getVisibleCardsCount();
-        const cardElement = cards[0];
-        const cardWidth = cardElement.offsetWidth;
-        // Cálculo preciso do espaçamento total (margem direita + esquerda)
-        const gap = parseInt(window.getComputedStyle(cardElement).marginLeft) + parseInt(window.getComputedStyle(cardElement).marginRight);
-        
+
         // A distância a mover é a largura de um card mais o espaçamento completo
-        const step = cardWidth + gap;
+        const step = cardWidth + cardMargin;
         const totalMovement = step * currentIndex;
-        
+
         carousel.style.transform = `translateX(-${totalMovement}px)`;
-        
+
         prevBtn.disabled = currentIndex === 0;
         nextBtn.disabled = currentIndex >= totalCards - visibleCards;
     };
@@ -103,6 +109,7 @@ export function initSkillsCarousel() {
     });
 
     window.addEventListener('resize', () => {
+        calculateCardMetrics();
         const visibleCards = getVisibleCardsCount();
         // Ajusta o índice se a janela diminuir e o índice atual se tornar inválido
         if (currentIndex > totalCards - visibleCards) {
@@ -112,5 +119,8 @@ export function initSkillsCarousel() {
     });
 
     // Um pequeno timeout para garantir que as dimensões dos cards foram calculadas pelo navegador
-    setTimeout(updateCarouselState, 100);
+    setTimeout(() => {
+        calculateCardMetrics();
+        updateCarouselState();
+    }, 100);
 }

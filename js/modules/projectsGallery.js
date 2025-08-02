@@ -32,6 +32,8 @@ const projects = [
 ];
 
 let currentProjectIndex = 0;
+const projectDots = [];
+let activeDotIndex = 0;
 
 function updateProjectContent(project) {
     const projectImage = document.getElementById('project-image');
@@ -47,7 +49,7 @@ function updateProjectContent(project) {
     if (githubLink) githubLink.href = project.githubUrl;
 }
 
-function updateProjectDots() {
+function createProjectDots() {
     const projectDotsContainer = document.getElementById('project-dots');
     if (!projectDotsContainer) return;
 
@@ -64,7 +66,18 @@ function updateProjectDots() {
             updateProjectDots();
         });
         projectDotsContainer.appendChild(dot);
+        projectDots.push(dot);
     });
+}
+
+function updateProjectDots() {
+    if (projectDots[activeDotIndex]) {
+        projectDots[activeDotIndex].classList.remove('active');
+    }
+    if (projectDots[currentProjectIndex]) {
+        projectDots[currentProjectIndex].classList.add('active');
+    }
+    activeDotIndex = currentProjectIndex;
 }
 
 export function initProjectsGallery() {
@@ -85,6 +98,7 @@ export function initProjectsGallery() {
         updateProjectDots();
     });
 
+    createProjectDots();
     // Inicializa o conteúdo do primeiro projeto
     updateProjectContent(projects[currentProjectIndex]);
     updateProjectDots();

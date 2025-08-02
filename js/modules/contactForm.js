@@ -7,35 +7,42 @@ export function initContactForm() {
 
     if (!form) return;
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
         const formData = new FormData(form);
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        setLoadingState(true);
         feedbackDiv.innerHTML = '';
 
         try {
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             });
 
             if (response.ok) {
-                feedbackDiv.innerHTML = `<p class="success">Mensagem enviada com sucesso! Obrigado pelo contato, miau! 🐾</p>`;
+                showFeedback('success', 'Mensagem enviada com sucesso! Obrigado pelo contato, miau! 🐾');
                 form.reset();
             } else {
-                throw new Error('Houve um problema com a resposta do servidor.');
+                throw new Error('Houve um problema com a resposta do servidor Miau! Tente mais tarde.');
             }
         } catch (error) {
             console.error('Erro ao enviar formulário:', error);
-            feedbackDiv.innerHTML = `<p class="error">Oops! Ocorreu um erro ao enviar a mensagem. Por favor, tente novamente mais tarde ou me contate por outro meio.</p>`;
+            showFeedback('error', 'Oops! Ocorreu um erro ao enviar a mensagem. Por favor, tente novamente mais tarde ou me contate por outro meio.');
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Enviar Miaumensagem <i class="fas fa-paper-plane ml-2"></i>';
+            setLoadingState(false);
         }
     });
+
+    function setLoadingState(isLoading) {
+        submitBtn.disabled = isLoading;
+        submitBtn.innerHTML = isLoading
+            ? '<i class="fas fa-spinner fa-spin"></i> Enviando...'
+            : 'Enviar Miaumensagem <i class="fas fa-paper-plane ml-2"></i>';
+    }
+
+    function showFeedback(type, message) {
+        feedbackDiv.innerHTML = `<p class="${type}">${message}</p>`;
+    }
 }

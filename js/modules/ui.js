@@ -39,7 +39,7 @@ function initThemeToggle() {
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const isDarkMode = savedTheme === 'dark' || (savedTheme === null && prefersDark);
-    
+
     const applyTheme = (dark) => {
         body.classList.toggle('dark-mode', dark);
         themeToggles.forEach(toggle => {
@@ -51,7 +51,7 @@ function initThemeToggle() {
         });
         localStorage.setItem('theme', dark ? 'dark' : 'light');
     };
-    
+
     applyTheme(isDarkMode);
 
     themeToggles.forEach(toggle => {
@@ -67,22 +67,16 @@ function initThemeToggle() {
  */
 function initBackToTopButton() {
     const backToTopButton = document.getElementById('back-to-top');
-    if (!backToTopButton) return;
-
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            backToTopButton.classList.add('show');
-        } else {
-            backToTopButton.classList.remove('show');
-        }
-    });
+    if (!backToTopButton) return null;
 
     backToTopButton.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+
+    return () => {
+        const shouldShow = window.scrollY > 300;
+        backToTopButton.classList.toggle('show', shouldShow);
+    };
 }
 
 /**
@@ -90,13 +84,13 @@ function initBackToTopButton() {
  */
 function initScrollProgressBar() {
     const scrollProgressBar = document.getElementById('scroll-progress-bar');
-    if (!scrollProgressBar) return;
+    if (!scrollProgressBar) return null;
 
-    window.addEventListener('scroll', () => {
+    return () => {
         const totalHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const progress = (window.scrollY / totalHeight) * 100;
         scrollProgressBar.style.width = `${progress}%`;
-    });
+    };
 }
 
 /**
@@ -106,6 +100,27 @@ function initScrollProgressBar() {
 export function initUI() {
     initMobileMenu();
     initThemeToggle();
-    initBackToTopButton();
-    initScrollProgressBar();
+    const updateBackToTop = initBackToTopButton();
+    const updateProgressBar = initScrollProgressBar();
+
+    if (updateBackToTop || updateProgressBar) {
+        let ticking = false;
+        const handleScroll = () => {
+            if (updateBackToTop) updateBackToTop();
+            if (updateProgressBar) updateProgressBar();
+            ticking = false;
+        };
+
+        window.addEventListener(
+            'scroll',
+            () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(handleScroll);
+                    ticking = true;
+                }
+            },
+            { passive: true }
+        );
+        handleScroll();
+    }
 }

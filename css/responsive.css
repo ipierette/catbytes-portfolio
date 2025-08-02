@@ -77,6 +77,48 @@
     .hero-image-container {
         margin-right: 0;
     }
+
+    .ai-tabs .tab-button {
+        font-size: 0.7rem;
+        /* Reduz o tamanho da fonte */
+    }
+}
+
+
+@media (max-width: 41.875rem) { /* 670px e menor */
+
+    /* 2. Esconde o conteúdo que vaza da "moldura" do carrossel */
+    .skills-carousel-wrapper {
+        overflow: hidden;
+    }
+
+    /* 3. Garante que os botões fiquem sempre por cima dos cards */
+    .carousel-btn {
+        z-index: 10;
+    }
+    
+    .carousel-btn.prev {
+        left: 0.5rem; /* Estava -0.5rem */
+    }
+    .carousel-btn.next {
+        right: 0.5rem; /* Estava -0.5rem */
+    }
+
+   .skill-card {
+        margin: 0 2rem;
+        flex-basis: calc(90% - 2rem);
+        max-width: calc(90% - 2rem);
+
+        padding: 1.25rem;
+    }
+
+    .skill-card-title {
+        font-size: 1.15rem;
+    }
+    .skill-card-description {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
 }
 
 @media (max-width: 32rem) {
@@ -97,5 +139,32 @@
         right: auto;
         min-width: 0;
         margin: 0;
+    }
+}
+
+
+@media (max-width: 25rem) {
+    .project-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .project-links a {
+        margin: 0 !important;
+        width: 60%;
+        justify-content: center;
+    }
+
+     .skill-card-title {
+        font-size: 0.7rem;
+    }
+
+     .skill-card-description {
+        font-size: 0.6rem;
+        line-height: 1.4;
+    }
+
+    .meow-level{
+    font-size: 0.6rem;
     }
 }
