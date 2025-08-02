@@ -1,0 +1,55 @@
+/* =================================
+   ANIMAÇÕES E EFEITOS
+   ================================= */
+
+/* --- Animação de Entrada para Seções --- */
+.section-animated {
+    opacity: 0;
+    transform: translateY(3.125rem); /* 50px */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.section-animated.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Efeito de Digitação do Pop-up --- */
+.cat-popup.typing-effect p::after {
+    content: '▋'; /* Cursor piscante */
+    opacity: 1;
+    animation: blink 0.7s infinite;
+}
+
+.cat-popup.finished p::after {
+    content: '';
+    animation: none;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+
+/* --- Animação do Gradiente "CatBytes" --- */
+@keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+/* --- Animação da Seta de Rolagem --- */
+@keyframes downarrow {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, 0.625rem); } /* 10px */
+}
+
+
+/* --- Animação de Pulsar do Círculo Roxo --- */
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    70% { transform: scale(1.5); opacity: 0; }
+    100% { transform: scale(0.95); opacity: 0; }
+}

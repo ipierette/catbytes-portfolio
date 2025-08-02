@@ -1,0 +1,29 @@
+# Arquivos de Log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependências
+node_modules
+
+# Pasta de build do Vite
+dist
+dist-ssr
+
+# Arquivos de ambiente - NUNCA comitar chaves de API!
+.env
+.env.local
+.env.*.local
+
+# Arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos do Editor/IDE
+.vscode/
+.idea/
+
+# Arquivos de cache e temporários
+.npm
+.eslintcache
+.vite-node-sourcemap-cache

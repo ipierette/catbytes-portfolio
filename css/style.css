@@ -1,0 +1,371 @@
+/* style.css */
+
+/* =================================
+   1. IMPORTAÇÕES
+   ================================= */
+@import url('reset.css');
+@import url('variables.css');
+@import url('components/animations.css');
+@import url('components/skills.css');
+
+
+/* =================================
+   2. ESTILOS GLOBAIS
+   ================================= */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Customização da barra de rolagem */
+::-webkit-scrollbar {
+    width: 0.75rem;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-green-eyes);
+    border-radius: 0.625rem;
+    border: 0.1875rem solid var(--bg-primary);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #256b46;
+}
+
+
+/* =================================
+   3. ESTILOS DE FUNDO E TEMA PARA SEÇÕES
+   ================================= */
+
+/* Textura sutil 1 */
+.bg-texture-1 {
+    background-color: var(--bg-secondary);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Seção com fundo de gradiente */
+.bg-gradient-section {
+    background: linear-gradient(to bottom right, rgba(249, 251, 253, 0.9), rgba(226, 230, 236, 0.9));
+    transition: background 0.3s ease-in-out;
+}
+body.dark-mode .bg-gradient-section {
+    background: linear-gradient(to bottom right, rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8));
+}
+
+/* Regras de cor de texto para as seções temáticas */
+section.bg-texture-1,
+section.bg-gradient-section {
+    color: var(--text-primary);
+}
+body.dark-mode section.bg-texture-1,
+body.dark-mode section.bg-gradient-section {
+    color: #FFFFFF;
+}
+
+
+/* =================================
+   4. COMPONENTES GERAIS
+   ================================= */
+
+/* Header */
+header {
+    background-color: var(--bg-header);
+    color: var(--text-on-dark);
+    transition: background-color 0.3s ease;
+}
+header nav ul li a {
+    position: relative;
+    text-decoration: none;
+}
+header nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0%;
+    height: 0.125rem;
+    bottom: -0.1875rem;
+    left: 0;
+    background-color: var(--color-purple-accent);
+    transition: width 0.3s ease-out;
+}
+header nav ul li a:hover::after {
+    width: 100%;
+}
+
+/* style.css */
+
+/* Menu Mobile - Posição Absoluta */
+#mobile-menu {
+    position: absolute;
+    top: 100%; 
+    left: 50%; /* Adicionado para centralizar */
+    transform: translateX(-50%); /* Adicionado para centralizar */
+    width: 40%; /* ALTERADO: De 100% para 40% (60% menor) */
+    z-index: 49; 
+}
+
+/* Seções */
+section {
+    padding: 4rem 1rem;
+    overflow: hidden;
+}
+
+/* Títulos das Seções */
+#about h2, 
+#skills .section-title, 
+#projects h2, 
+#curiosities h2, 
+#ai-features h2, 
+#contact h2 {
+    color: var(--color-green-light);
+}
+
+/* Formulários */
+input, textarea, select {
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    background-color: var(--input-bg);
+    color: var(--input-text);
+}
+input::placeholder, textarea::placeholder {
+    color: var(--input-placeholder);
+}
+input:focus, textarea:focus, select:focus {
+    border-color: var(--color-green-eyes);
+    box-shadow: 0 0 0 0.1875rem rgba(46, 139, 87, 0.2);
+    outline: none;
+}
+
+/* Barra de Progresso de Rolagem */
+.scroll-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 0.25rem;
+    background-color: var(--progress-bar-color);
+    width: 0%;
+    z-index: 1001;
+    transition: width 0.1s ease-out;
+}
+
+/* Botão Voltar ao Topo */
+#back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0);
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+}
+#back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+/* Feedback do Formulário */
+#form-feedback .success {
+    color: var(--color-green-light);
+    background-color: rgba(124, 252, 0, 0.1);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border-left: 0.25rem solid var(--color-green-light);
+}
+#form-feedback .error {
+    color: #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.1);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #ff6b6b;
+}
+
+
+/* =================================
+   5. ESTILOS ESPECÍFICOS
+   ================================= */
+
+/* =================================
+   5. ESTILOS ESPECÍFICOS - SEÇÃO HERO (COM CSS GRID)
+   ================================= */
+
+#hero {
+    position: relative;
+    min-height: calc(100vh - 5.625rem);
+    display: grid; /* MUDANÇA PRINCIPAL: Usando Grid */
+    grid-template-columns: 1fr 1fr;
+    align-items: end; /* Alinha os itens (texto e gato) na base da seção */
+    padding: 2rem 5% 0; /* Adiciona 2rem em cima, 5% nas laterais e 0 EMBAIXO */
+    gap: 1.5rem; /* Espaçamento entre o texto e o gato */
+}
+
+#particles-js {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 1;
+}
+
+.hero-text-container {
+    text-align: left;
+    z-index: 3;
+    justify-self: end; /* Alinha o bloco de texto à direita da sua coluna */
+    padding-bottom: 2rem;
+    align-self: center;
+    max-width: 35rem;
+}
+
+.hero-image-container {
+    position: relative;
+    z-index: 2;
+    justify-self: center;
+    /* margin-right: 14rem; */
+}
+
+#hero h1, #hero p {
+    color: var(--text-primary);
+}
+
+#hero h1 .catbytes-gradient {
+    background-image: linear-gradient(135deg, #a855f7, #2dd4bf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-animation 4s ease infinite;
+}
+
+#hero img {
+    max-width: 16.875rem;
+    height: auto;
+    display: block;
+}
+
+#hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
+    background: linear-gradient(to bottom right, rgba(249, 251, 253, 0.9), rgba(226, 230, 236, 0.9));
+    transition: background 0.3s ease-in-out;
+}
+
+body.dark-mode #hero::before {
+    background: linear-gradient(to bottom right, rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8));
+}
+
+#hero::after {
+    content: url('../images/seta_preta.webp');
+    position: absolute;
+    height: 2.1875rem;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: downarrow 1.5s infinite ease-in-out;
+    opacity: 0.7;
+    z-index: 3;
+}
+
+body.dark-mode #hero::after {
+  filter: invert(1) brightness(1.5) drop-shadow(0 0 0.3125rem rgba(255, 255, 255, 0.7));
+}
+
+a[aria-label="Conheça meus projetos"]:hover {
+    box-shadow: 0 0 0.9375rem 0.1875rem rgb(11, 157, 118);
+}
+
+#cat-hover-area {
+    position: absolute;
+    top: 45%;
+    left: 25%;
+    width: 3.75rem;
+    height: 3.75rem;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 5;
+}
+
+#cat-hover-area::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(138, 43, 226, 0.5) 0%, rgba(138, 43, 226, 0) 70%);
+    animation: pulse 1s infinite;
+}
+
+/* Pop-up de fala com estilos para MODO CLARO (conforme solicitado) */
+.cat-popup {
+    position: absolute;
+    bottom: 60%;
+    left: 90%;
+    width: 16.25rem;
+    padding: 1rem;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(1.25rem);
+    transition: all 0.3s ease-in-out;
+    border-radius: 1.125rem;
+    line-height: 1.5;
+    background-color: #f0f0f0;
+    color: #333;
+    border: 0.125rem solid var(--color-purple-accent);
+    box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.25);
+}
+
+/* Estilos do Pop-up para MODO ESCURO */
+body.dark-mode .cat-popup {
+    background-color: #2D3748;
+    color: #FFFFFF;
+    border: 0.125rem solid var(--color-green-light);
+}
+
+.cat-popup.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Cauda do balão - a borda */
+.cat-popup::after {
+    content: '';
+    position: absolute;
+    top: 60%;
+    left: -0.75rem;
+    width: 1.25rem;;
+    height: 1.25rem;;
+    background: var(--color-purple-accent); /* Roxo no modo claro */
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    transition: background-color 0.3s ease;
+}
+
+/* Cauda do balão - o fundo */
+.cat-popup::before {
+    content: '';
+    position: absolute;
+    top: 60%;
+    left: -0.5rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    background: #f0f0f0; /* Fundo claro no modo claro */
+    clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    z-index: 1;
+    transition: background-color 0.3s ease;
+}
+
+/* Troca de cor da cauda no modo escuro */
+body.dark-mode .cat-popup::after {
+    background: var(--color-green-light);
+}
+body.dark-mode .cat-popup::before {
+    background: #2D3748;
+}
+
+/* --- Seção Contato --- */
+#contact .max-w-2xl p {
+    color: var(--text-on-dark);
+}

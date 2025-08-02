@@ -1,0 +1,41 @@
+/* variables.css */
+:root {
+    /* Paleta Principal */
+    --color-green-eyes: #2E8B57;
+    --color-dark-gray: #36454F;
+    --color-light-gray: #F8F8F8;
+    --color-purple-accent: #8A2BE2;
+    --color-orange-accent: #FF8C00;
+    --color-blue-accent: #00BFFF;
+    --color-green-light: #7CFC00;
+
+    /* Variáveis do Tema Claro (Padrão) */
+    --bg-primary: var(--color-light-gray);
+    --bg-secondary: #FFFFFF;
+    --bg-header: #1A202C; /* gray-900 */
+    --bg-footer: #2D3748; /* gray-800 */
+    --text-primary: var(--color-dark-gray);
+    --text-secondary: #4A5568; /* gray-700 */
+    --text-on-dark: #FFFFFF;
+    --border-color: #D1D5DB; /* gray-300 */
+    --input-bg: #FFFFFF;
+    --input-text: #4A5568;
+    --input-placeholder: #A0AEC0;
+    --progress-bar-color: var(--color-purple-accent);
+}
+
+body.dark-mode {
+    /* Variáveis do Tema Escuro */
+    --bg-primary: #1A202C; /* gray-900 */
+    --bg-secondary: #2D3748; /* gray-800 */
+    --bg-header: #000000;
+    --bg-footer: #1A202C;
+    --text-primary: #E2E8F0; /* gray-200 */
+    --text-secondary: #A0AEC0; /* gray-400 */
+    --text-on-dark: #FFFFFF;
+    --border-color: #4A5568; /* gray-700 */
+    --input-bg: #2D3748;
+    --input-text: #E2E8F0;
+    --input-placeholder: #718096;
+    --progress-bar-color: var(--color-green-eyes);
+}
