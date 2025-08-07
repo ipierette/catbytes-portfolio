@@ -47,11 +47,30 @@ body {
 
 /* Seção com fundo de gradiente */
 .bg-gradient-section {
-    background: linear-gradient(to bottom right, rgba(249, 251, 253, 0.9), rgba(226, 230, 236, 0.9));
-    transition: background 0.3s ease-in-out;
+    background: radial-gradient(
+        ellipse at 60% 40%,
+        #ffffff 0%,
+        #f8fbff 40%,      /* branco gelo */
+        #eaf6ff 70%,      /* azul muito claro */
+        #e0e7ef 100%      /* azul acinzentado claro */
+    );
+    box-shadow:
+        0 4px 32px 0 rgba(200, 220, 255, 0.18),
+        0 0 80px 0 rgba(255,255,255,0.25) inset;
+    transition: background 0.3s ease-in-out, box-shadow 0.3s;
 }
+
 body.dark-mode .bg-gradient-section {
-    background: linear-gradient(to bottom right, rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8));
+   background: radial-gradient(
+        ellipse at 60% 40%,
+        #232946 0%,
+        #23263a 60%,
+        #1a1c28 100%
+    );
+    box-shadow:
+        0 2px 24px 0 rgba(30, 40, 80, 0.18),
+        0 0 60px 0 rgba(0,0,0,0.22) inset;
+    transition: background 0.6s cubic-bezier(.4,0,.2,1), box-shadow 0.6s cubic-bezier(.4,0,.2,1);
 }
 
 /* Regras de cor de texto para as seções temáticas */
@@ -141,7 +160,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 /* Barra de Progresso de Rolagem */
-.scroll-progress-bar {
+#scroll-progress-bar {
     position: fixed;
     top: 0;
     left: 0;
@@ -223,7 +242,6 @@ input:focus, textarea:focus, select:focus {
     position: relative;
     z-index: 2;
     justify-self: center;
-    /* margin-right: 14rem; */
 }
 
 #hero h1, #hero p {
@@ -231,11 +249,28 @@ input:focus, textarea:focus, select:focus {
 }
 
 #hero h1 .catbytes-gradient {
-    background-image: linear-gradient(135deg, #a855f7, #2dd4bf);
+    background-image: linear-gradient(
+        90deg,
+        #a21caf 0%,     /* Roxo vibrante */
+        #38bdf8 20%,    /* Azul piscina */
+        #22d3ee 40%,    /* Azul claro */
+        #4ade80 60%,    /* Verde neon */
+        #f472b6 80%,    /* Rosa chiclete */
+        #a21caf 100%    /* Roxo vibrante */
+    );
+    background-size: 300% auto;
+    background-position: 0% 50%;
     -webkit-background-clip: text;
     background-clip: text;
+    color: transparent;
     -webkit-text-fill-color: transparent;
-    animation: gradient-animation 4s ease infinite;
+    display: inline-block;
+    filter: drop-shadow(0 2px 8px rgba(164, 28, 175, 0.15));
+    transition: filter 0.3s;
+}
+
+.catbytes-gradient.animate-gradient {
+    animation: gradient-animation 4s ease-in-out infinite;
 }
 
 #hero img {
@@ -249,12 +284,30 @@ input:focus, textarea:focus, select:focus {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     z-index: -1;
-    background: linear-gradient(to bottom right, rgba(249, 251, 253, 0.9), rgba(226, 230, 236, 0.9));
-    transition: background 0.3s ease-in-out;
+    background: radial-gradient(
+        ellipse at 60% 40%,
+        #ffffff 0%,
+        #f8fbff 40%,      /* branco gelo */
+        #eaf6ff 70%,      /* azul muito claro */
+        #e0e7ef 100%      /* azul acinzentado claro */
+    );
+    box-shadow:
+        0 4px 32px 0 rgba(200, 220, 255, 0.18),
+        0 0 80px 0 rgba(255,255,255,0.25) inset;
+    transition: background 0.3s ease-in-out, box-shadow 0.3s;
 }
 
 body.dark-mode #hero::before {
-    background: linear-gradient(to bottom right, rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.8));
+   background: radial-gradient(
+        ellipse at 60% 40%,
+        #232946 0%,
+        #23263a 60%,
+        #1a1c28 100%
+    );
+    box-shadow:
+        0 2px 24px 0 rgba(30, 40, 80, 0.18),
+        0 0 60px 0 rgba(0,0,0,0.22) inset;
+    transition: background 0.6s cubic-bezier(.4,0,.2,1), box-shadow 0.6s cubic-bezier(.4,0,.2,1);
 }
 
 #hero::after {
@@ -336,8 +389,8 @@ body.dark-mode .cat-popup {
     position: absolute;
     top: 60%;
     left: -0.75rem;
-    width: 1.25rem;;
-    height: 1.25rem;;
+    width: 1.25rem;
+    height: 1.25rem;
     background: var(--color-purple-accent); /* Roxo no modo claro */
     clip-path: polygon(100% 0, 0 50%, 100% 100%);
     transition: background-color 0.3s ease;
