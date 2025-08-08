@@ -3,7 +3,7 @@
 // URLs dos seus webhooks do n8n (substitua pelos seus)
 const N8N_WEBHOOKS = {
     GENERATE_AD: 'URL_DO_SEU_WEBHOOK_N8N_PARA_GERAR_ANUNCIO',
-    ADOPT_CAT: 'http://ipi-server.lat/webhook/adote-gatinho',
+    ADOPT_CAT: 'https://ipi-server.lat/webhook/adote-gatinho',
     IDENTIFY_CAT: 'URL_DO_SEU_WEBHOOK_N8N_PARA_IDENTIFICAR_GATOS'
 };
 
@@ -219,7 +219,7 @@ function setupAdoptCat() {
 
         try {
             // URL do seu webhook n8n — ajuste aqui!
-            const webhookUrl = 'http://ipi-server.lat/webhook/adote-gatinho';
+            const webhookUrl = 'https://ipi-server.lat/webhook/adote-gatinho';
             const results = await callN8nWebhook(webhookUrl, payload);
             renderAdoptionResults(resultsContainer, results);
         } catch (error) {
