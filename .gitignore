@@ -27,3 +27,5 @@ Thumbs.db
 .npm
 .eslintcache
 .vite-node-sourcemap-cache
+# Local Netlify folder
+.netlify
