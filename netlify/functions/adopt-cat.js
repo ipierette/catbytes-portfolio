@@ -6,7 +6,8 @@ const SOURCE_SITES = [
   'adotebicho.com.br', 'paraisodosfocinhos.com.br', 'adoteumpet.com.br'
 ];
 const BAD_WORDS = [
-  'venda', 'vende-se', 'valor', 'preço', 'r$', 'custo', 'taxa'
+  // 'custo' e 'taxa' foram removidos. A IA é mais capaz de julgar o contexto.
+  'venda', 'vende-se', 'valor', 'preço', 'r$'
 ];
 
 const isValidUrl = (u) => {
@@ -35,11 +36,11 @@ async function getAIScore(anuncio, apiKey) {
     Retorne APENAS um objeto JSON com o seguinte formato: {"score": <de 1 a 10>, "reason": "Justificativa curta"}.
 
     CRITÉRIOS DE PONTUAÇÃO:
-    - **Score 9-10 (Excelente):** Anúncio de uma ONG reconhecida (como adoteumgatinho.org.br, catland.org.br). O anúncio é detalhado, menciona castração, vacinas, temperamento e tem uma história. Mesmo que o snippet do Google diga "ADOTADO", isso é um sinal de sucesso da ONG, então mantenha a nota alta.
+    - **Score 9-10 (Excelente):** Anúncio de uma ONG reconhecida (como adoteumgatinho.org.br, catland.org.br). O anúncio é detalhado, menciona castração, vacinas, temperamento e tem uma história. **Se mencionar "taxa de adoção" para cobrir custos, isso é um sinal POSITIVO de uma ONG séria, então mantenha a nota alta.** Mesmo que o snippet do Google diga "ADOTADO", isso é um sinal de sucesso da ONG, então mantenha a nota alta.
     - **Score 7-8 (Bom):** Anúncio claro e detalhado de outras fontes. Contém informações essenciais como idade, se é castrado, e contato. Inspira confiança.
     - **Score 5-6 (Razoável):** Anúncio com informações básicas, mas sem muitos detalhes. Ex: "Gato para adoção, contato X". É válido, mas requer mais investigação do usuário.
     - **Score 3-4 (Baixo):** Anúncio muito vago, com pouca informação, ou que parece suspeito/comercial. Snippets curtos ou que não parecem ser de adoção.
-    - **Score 1-2 (Ruim):** Provavelmente não é um anúncio de adoção ou contém palavras que indicam venda.
+    - **Score 1-2 (Ruim):** Provavelmente não é um anúncio de adoção ou contém palavras que indicam venda explícita (ex: "preço", "valor de venda").
 
     INFORMAÇÕES DO ANÚNCIO:
     - Título: "${titulo}"
@@ -74,6 +75,46 @@ function getSimpleScore(anuncio, { color, localizacao }) {
   return Math.round(s * 10); // Retorna de 0 a 10
 }
 
+// Helper para executar uma busca na SerpApi e normalizar os resultados
+async function runQueryAndParse(query, apiKey) {
+  const serpUrl = new URL('https://serpapi.com/search');
+  Object.entries({
+    engine: 'google',
+    hl: 'pt-BR',
+    gl: 'br',
+    num: '10', // Pede 10 por busca
+    q: query,
+    api_key: apiKey,
+  }).forEach(([key, value]) => serpUrl.searchParams.set(key, value));
+
+  try {
+    const res = await fetch(serpUrl.toString());
+    if (!res.ok) {
+      console.error(`SerpAPI query failed for "${query}": ${res.status}`);
+      return [];
+    }
+    const data = await res.json();
+    const raw = Array.isArray(data.organic_results) ? data.organic_results : [];
+
+    return raw
+      .map(r => ({
+        titulo: r.title || 'Anúncio de Adoção',
+        descricao: r.snippet || '',
+        url: r.link || '',
+        fonte: r.displayed_link || r.source || 'desconhecida',
+        score: 0,
+      }))
+      .filter(a =>
+        a.descricao && a.descricao.length >= 40 &&
+        !BAD_WORDS.some(w => a.descricao.toLowerCase().includes(w)) &&
+        a.url && isValidUrl(a.url)
+      );
+  } catch (error) {
+    console.error(`Error fetching or parsing SerpAPI for query "${query}":`, error);
+    return [];
+  }
+}
+
 export const handler = async (event) => {
   try {
     if (event.httpMethod !== 'POST') {
@@ -90,47 +131,43 @@ export const handler = async (event) => {
     const body = JSON.parse(event.body || '{}');
     const { age = '', color = '', localizacao = '' } = body;
 
-    const terms = ['adoção de gatos'];
-    if (color) terms.push(`gato ${color}`);
-    if (age) terms.push(String(age));
-    if (localizacao) terms.push(localizacao);
-
+    // --- Estratégia de busca em múltiplos estágios ---
     const siteFilter = SOURCE_SITES.map(s => `site:${s}`).join(' OR ');
-    const query = `${terms.join(' ')} -filhotes ${siteFilter}`; // Adiciona '-filhotes' para evitar sites de venda
 
-    const serpUrl = new URL('https://serpapi.com/search');
-    Object.entries({
-      engine: 'google',
-      hl: 'pt-BR',
-      gl: 'br',
-      num: '12',
-      q: query,
-      api_key: SERPAPI_KEY,
-    }).forEach(([key, value]) => serpUrl.searchParams.set(key, value));
+    const specificTerms = ['adoção de gatos'];
+    if (color) specificTerms.push(`gato ${color}`);
+    if (age) specificTerms.push(String(age));
+    if (localizacao) specificTerms.push(localizacao);
 
-    const res = await fetch(serpUrl.toString());
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Erro SerpAPI:", text);
-      return jsonResponse(502, { error: 'Falha ao buscar anúncios na fonte externa.' });
+    const broadTerms = ['adoção de gatos'];
+    if (localizacao) broadTerms.push(localizacao);
+
+    // Lista de queries, da mais específica para a mais ampla
+    const queries = [
+      `${specificTerms.join(' ')} -filhotes (${siteFilter})`,
+      `${broadTerms.join(' ')} -filhotes (${siteFilter})`,
+    ];
+
+    // Se a localização for um estado ou cidade grande, faz uma busca mais ampla sem o filtro de sites
+    if (localizacao.length > 3) {
+      queries.push(`${broadTerms.join(' ')} -filhotes`);
     }
-    const data = await res.json();
 
-    const raw = Array.isArray(data.organic_results) ? data.organic_results : [];
-    let anuncios = raw
-      .map(r => ({
-        titulo: r.title || 'Anúncio de Adoção',
-        descricao: r.snippet || '',
-        url: r.link || '',
-        fonte: r.displayed_link || r.source || 'desconhecida',
-        score: 0,
-      }))
-      .filter(a =>
-        a.descricao &&
-        a.descricao.length >= 40 &&
-        !BAD_WORDS.some(w => a.descricao.toLowerCase().includes(w)) &&
-        a.url && isValidUrl(a.url)
-      );
+    const allResults = new Map(); // Usamos Map para desduplicar por URL
+
+    for (const query of queries) {
+      // Se já temos resultados suficientes, podemos parar de buscar.
+      if (allResults.size >= 15) break;
+
+      const newAds = await runQueryAndParse(query, SERPAPI_KEY);
+      newAds.forEach(ad => {
+        if (ad.url && !allResults.has(ad.url)) {
+          allResults.set(ad.url, ad);
+        }
+      });
+    }
+
+    let anuncios = Array.from(allResults.values());
 
     if (anuncios.length > 0) {
       // Pontua todos os anúncios em paralelo usando IA
@@ -157,7 +194,7 @@ export const handler = async (event) => {
     }
 
     if (!anuncios.length) {
-      const qBase = encodeURIComponent(terms.join(' '));
+      const qBase = encodeURIComponent(broadTerms.join(' '));
       anuncios = [
         {
           titulo: 'Resultados de adoção no Google',
@@ -179,7 +216,7 @@ export const handler = async (event) => {
         quantidade: anuncios.length,
         anuncios,
         mensagem: 'Não achamos anúncios específicos. Que tal tentar uma busca mais ampla?',
-        meta: { onlyFallbacks: true, engine: 'serpapi-google', terms, sites: SOURCE_SITES },
+        meta: { onlyFallbacks: true, engine: 'serpapi-google', terms: broadTerms, sites: SOURCE_SITES },
       });
     }
 
@@ -188,7 +225,7 @@ export const handler = async (event) => {
       quantidade: anuncios.length,
       anuncios,
       mensagem: 'Veja os anúncios de adoção que encontramos e analisamos para você.',
-      meta: { engine: 'serpapi-google', terms, sites: SOURCE_SITES },
+      meta: { engine: 'serpapi-google', terms: specificTerms, sites: SOURCE_SITES },
     });
   } catch (err) {
     console.error("Erro inesperado no handler:", err);

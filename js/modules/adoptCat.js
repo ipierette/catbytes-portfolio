@@ -74,17 +74,33 @@ function renderSadNotice(container) {
 }
 
 /* ---------------- Render principal (somente estilo/responsivo) ---------------- */
-export function renderAdoptionResults(container, data) {
-  container.innerHTML = '';
+export function renderAdoptionResults(container, data, { append = false } = {}) {
+  let list;
+  const onlyFallbacks = Boolean(data?.meta?.onlyFallbacks);
 
-  if (data?.mensagem) {
-    container.appendChild(
-      el('div', 'mb-4 font-semibold text-emerald-700 dark:text-emerald-300', data.mensagem)
-    );
+  if (append) {
+    // Se for para adicionar, encontra a lista existente e remove o botão antigo.
+    list = container.querySelector('.grid');
+    const oldBtn = container.querySelector('.show-more-btn');
+    if (oldBtn) oldBtn.remove();
+  } else {
+    // Se for a primeira renderização, limpa tudo e cria a estrutura.
+    container.innerHTML = '';
+    if (data?.mensagem) {
+      container.appendChild(
+        el('div', 'mb-4 font-semibold text-emerald-700 dark:text-emerald-300', data.mensagem)
+      );
+    }
+    list = el('div', 'mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3');
+    container.appendChild(list);
+  }
+
+  if (!list) {
+    console.error('Container da lista não encontrado para renderizar anúncios.');
+    return;
   }
 
   let anuncios = Array.isArray(data?.anuncios) ? data.anuncios : [];
-  const onlyFallbacks = Boolean(data?.meta?.onlyFallbacks);
 
   if (!anuncios.length) {
     anuncios = [
@@ -104,9 +120,6 @@ export function renderAdoptionResults(container, data) {
       },
     ];
   }
-
-  const list = el('div', 'mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3');
-  container.appendChild(list);
 
   anuncios.forEach((anuncio) => {
     const href = bestUrl(anuncio);
@@ -348,7 +361,7 @@ badgeWrap.appendChild(tipWrap);
     list.appendChild(card);
   });
 
-  if (onlyFallbacks) renderSadNotice(container);
+  if (!append && onlyFallbacks) renderSadNotice(container);
 }
 
 /* ---------------- Entry point (lógica original mantida) ---------------- */
@@ -371,6 +384,7 @@ export function initAdoptCat() {
   }
 
   const renderCurrentPage = () => {
+    const isAppending = currentPage > 0;
     const startIndex = currentPage * ADS_PER_PAGE;
     const endIndex = startIndex + ADS_PER_PAGE;
     const adsForPage = allAds.slice(startIndex, endIndex);
@@ -378,25 +392,26 @@ export function initAdoptCat() {
     const dataForRender = {
       anuncios: adsForPage,
       // Mensagem e meta só na primeira página para não repetir
-      mensagem: currentPage === 0 ? backendResponse.mensagem : null,
+      mensagem: isAppending ? null : backendResponse.mensagem,
       meta: backendResponse.meta,
     };
 
-    // A função original limpa o container, o que é o comportamento desejado ("sumir e aparecer").
-    renderAdoptionResults(resultsContainer, dataForRender);
+    // A função agora pode adicionar ao container em vez de limpar.
+    renderAdoptionResults(resultsContainer, dataForRender, { append: isAppending });
 
     // Adiciona o botão "Mostrar mais" se houver mais anúncios
     const hasMore = allAds.length > endIndex;
     if (hasMore) {
       const showMoreBtn = el(
         'button',
-        'mt-6 w-full sm:w-auto mx-auto block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105',
+        // Adicionada a classe .show-more-btn para ser encontrada e removida
+        'show-more-btn mt-6 w-full sm:w-auto mx-auto block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105',
         'Mostrar mais anúncios'
       );
       showMoreBtn.addEventListener('click', () => {
         currentPage++;
         renderCurrentPage();
-        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // A rolagem para o topo foi removida para uma experiência de "carregar mais" mais suave.
       });
       resultsContainer.appendChild(showMoreBtn);
     }
