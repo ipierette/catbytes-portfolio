@@ -6,8 +6,11 @@
 @import url('reset.css');
 @import url('variables.css');
 @import url('components/animations.css');
+/* NOVO: Importa os controles reutilizáveis */
+@import url('components/carousel-controls.css'); 
 @import url('components/skills.css');
 
+/* ... resto do seu arquivo style.css ... */
 
 /* =================================
    2. ESTILOS GLOBAIS
@@ -138,16 +141,6 @@ header nav ul li a:hover::after {
 section {
     padding: 4rem 1rem;
     overflow: hidden;
-}
-
-/* Títulos das Seções */
-#about h2,
-#skills .section-title,
-#projects h2,
-#curiosities h2,
-#ai-features h2,
-#contact h2 {
-    color: var(--color-green-light);
 }
 
 /* Formulários */

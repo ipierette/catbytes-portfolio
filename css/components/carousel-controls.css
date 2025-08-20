@@ -1,0 +1,124 @@
+/* ================================================================
+| COMPONENTE REUTILIZÁVEL: CONTROLES DE CARROSSEL (VERSÃO SUTIL)   |
+================================================================ */
+:root {
+    --control-size: 40px; 
+    --control-transition-speed: 0.3s;
+}
+
+/* Container genérico que ativa os controles no hover (usado na seção Skills) */
+.carousel-container {
+    position: relative;
+}
+
+.carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    
+    width: var(--control-size);
+    height: var(--control-size);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* EFEITO DE GRADIENTE SUTIL */
+    background: linear-gradient(-45deg, 
+        #005F73, /* Dark Cyan */
+        #0A9396, /* Viridian Green */
+        #94D2BD, /* Pale Aqua */
+        #E9D8A6  /* Pale Gold */
+    );
+    background-size: 300% 300%;
+    animation: gradient-animation 8s ease-in-out infinite;
+
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--control-transition-speed) ease,
+                transform var(--control-transition-speed) ease,
+                box-shadow var(--control-transition-speed) ease;
+}
+
+.carousel-container:hover .carousel-control {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+}
+
+/* Efeito de hover no botão */
+.carousel-control:hover {
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* --- MODO ESCURO --- */
+body.dark-mode .carousel-control {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .carousel-control:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Ícone de seta */
+.carousel-control::before {
+    content: '';
+    display: inline-block;
+    width: 10px; 
+    height: 10px;
+    border-style: solid;
+    border-width: 2px 2px 0 0;
+    border-color: currentColor;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+}
+
+/* ================================================================
+| POSICIONAMENTO ESPECÍFICO DOS CONTROLES                          |
+================================================================ */
+
+/* --- Layout Hover (Seção SKILLS) --- */
+#prev-skill {
+    /* AJUSTE: Move o botão para FORA da área do carrossel */
+    left: -20px; 
+}
+#prev-skill::before {
+    transform: translateX(1px) rotate(-135deg);
+}
+
+#next-skill {
+    /* AJUSTE: Move o botão para FORA da área do carrossel */
+    right: -20px;
+}
+#next-skill::before {
+    transform: translateX(-1px) rotate(45deg);
+}
+
+
+/* --- Layout Fixo Abaixo (Seção PROJETOS) --- */
+.project-navigation-below .carousel-control {
+    position: static;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+}
+
+.project-navigation-below .carousel-control:hover {
+    transform: scale(1.15);
+}
+
+.project-navigation-below #prev-project::before {
+    transform: translateX(1px) rotate(-135deg);
+}
+
+.project-navigation-below #next-project::before {
+    transform: translateX(-1px) rotate(45deg);
+}

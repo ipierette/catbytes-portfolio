@@ -1,11 +1,10 @@
 // public/js/modules/adoptCat.js
-// Fonte principal: Netlify Function (SerpAPI)
-// Mantém fallbacks Google/OLX e aviso de qualidade
-// Exporta initAdoptCat() para ser chamado no main.js
+// Mantém o fluxo original (submit -> Netlify -> render).
+// Alterações APENAS visuais/responsividade (cards + badge do score).
 
 const NETLIFY_FN = '/.netlify/functions/adopt-cat';
 
-// ---------------- Helpers ----------------
+/* ---------------- Helpers ---------------- */
 const $ = (sel, root = document) => root.querySelector(sel);
 
 function el(tag, className = '', text = '') {
@@ -47,15 +46,26 @@ function hostname(u) {
   }
 }
 
-// ---------------- UI extras ----------------
+/* ---- clamp para evitar overflow em mobile ---- */
+function clampLines(node, lines = 4) {
+  if (!node) return;
+  Object.assign(node.style, {
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: String(lines),
+    overflow: 'hidden'
+  });
+}
+
+/* ---------------- Aviso fallback ---------------- */
 function renderSadNotice(container) {
   const box = el(
     'div',
-    'rounded-lg border border-yellow-300 bg-yellow-50 text-yellow-800 p-3 my-3'
+    'rounded-lg border border-amber-300 bg-amber-50 text-amber-800 dark:bg-amber-100/20 dark:text-amber-200 p-3 my-3'
   );
   const p = el(
     'p',
-    'text-sm',
+    'text-sm leading-relaxed',
     '😿 Ops! Apesar da quantidade enorme de fofuras sem lar, ainda não conseguimos selecionar anúncios confiáveis via automação agora. ' +
     'Por favor, use os links genéricos abaixo para ao menos dar uma olhadinha.'
   );
@@ -63,20 +73,19 @@ function renderSadNotice(container) {
   container.appendChild(box);
 }
 
-// ---------------- Render principal ----------------
+/* ---------------- Render principal (somente estilo/responsivo) ---------------- */
 export function renderAdoptionResults(container, data) {
   container.innerHTML = '';
 
   if (data?.mensagem) {
     container.appendChild(
-      el('div', 'mb-4 font-semibold text-green-700', data.mensagem)
+      el('div', 'mb-4 font-semibold text-emerald-700 dark:text-emerald-300', data.mensagem)
     );
   }
 
   let anuncios = Array.isArray(data?.anuncios) ? data.anuncios : [];
   const onlyFallbacks = Boolean(data?.meta?.onlyFallbacks);
 
-  // Se veio vazio, cria fallbacks genéricos
   if (!anuncios.length) {
     anuncios = [
       {
@@ -96,85 +105,251 @@ export function renderAdoptionResults(container, data) {
     ];
   }
 
-  // Lista
-  const list = el('div', 'space-y-3');
+  const list = el('div', 'mt-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-3');
   container.appendChild(list);
 
   anuncios.forEach((anuncio) => {
     const href = bestUrl(anuncio);
-    const card = el(
-      'article',
-      'flex items-start gap-3 p-4 rounded-xl shadow-sm border border-gray-200 bg-white/70 dark:bg-zinc-900/50'
-    );
 
-    // Badge score
-    const badgeWrap = el('div', 'w-[70px] shrink-0 text-center');
+ const card = el(
+  'article',
+  [
+    'flex flex-col gap-2',
+    'rounded-xl border border-zinc-200 dark:border-zinc-700',
+    // 👇 fundo claro no light, “midnight” no dark (sem classe custom)
+    'bg-white dark:bg-[rgb(11,19,32)]',
+    'shadow-sm hover:shadow-md transition',
+    'p-4 sm:p-5'
+  ].join(' ')
+);
+
+    const top = el('div', 'flex items-start gap-3');
+
+    // Coluna esquerda: label + badge
+    const badgeWrap = el('div', 'w-[72px] shrink-0 text-center');
     badgeWrap.appendChild(
-      el('div', 'text-xs font-semibold text-yellow-700 mb-1', 'Score da IA')
+      el('div', 'text-[11px] font-medium text-zinc-500 dark:text-slate-300 mb-1', 'Score da IA')
     );
-    const scoreRaw =
-      typeof anuncio.score === 'number'
-        ? anuncio.score
-        : Number(anuncio.score) || 0;
-    const shown = scoreRaw > 1 ? Math.round(scoreRaw) : Math.round(scoreRaw * 100);
-    const badge = el(
-      'span',
-      'inline-flex items-center justify-center w-12 h-12 rounded-full border-2 border-yellow-500 text-sm font-bold cursor-help select-none',
-      String(shown || 0)
-    );
-    badge.title =
-      'Selo de confiabilidade: quanto maior o score, mais confiável o anúncio segundo a IA.';
-    badgeWrap.appendChild(badge);
 
-    // Conteúdo
-    const content = el('div', 'flex-1 w-full');
+    // Normaliza score para 1–10
+    let rawScore = Number(anuncio.score) || 0;
+    if (rawScore <= 1) rawScore *= 10;                  // se veio 0–1, converte
+    rawScore = Math.max(1, Math.min(10, rawScore));     // clamp 1–10
+    const shown = Math.round(rawScore);
+
+    const palette =
+      rawScore >= 8
+        ? { bg: 'bg-emerald-500', ring: 'ring-emerald-300/60' }
+        : rawScore >= 5
+          ? { bg: 'bg-amber-500',   ring: 'ring-amber-300/60' }
+          : { bg: 'bg-rose-500',     ring: 'ring-rose-300/60' };
+
+// === Tooltip click-only com auto-close, links enxutos e feedback no badge ===
+
+// wrapper relativo para posicionar tooltip em relação ao badge
+const tipWrap = el('div', 'relative inline-block');
+
+// BOTÃO (badge clicável) — mantém seu visual + efeito de “levantar” no hover
+const badgeBtn = el('button', [
+  'inline-grid place-items-center',
+  'w-12 h-12 rounded-full text-sm font-bold select-none',
+  'text-white cursor-pointer',
+  'ring-2 ring-offset-2',
+  'ring-offset-white dark:ring-offset-zinc-900',
+  'transition-transform transition-shadow duration-200',
+  'hover:-translate-y-1 hover:shadow-lg',
+  palette.bg, palette.ring
+].join(' '), String(shown)); // use "shown" (ou score10) conforme seu arquivo
+badgeBtn.type = 'button';
+badgeBtn.setAttribute('aria-haspopup', 'dialog');
+badgeBtn.setAttribute('aria-expanded', 'false');
+badgeBtn.setAttribute('aria-label', `Score ${shown} de 10`);
+
+// TOOLTIP (inicialmente fechado) — acima do badge, centralizado
+const tooltip = el('div', [
+  'invisible opacity-0 translate-y-1',
+  'transition',
+  'absolute z-50',
+  'left-1/2 -translate-x-1/2',
+  'bottom-full mb-2',                 // fica acima do botão
+  'w-64 max-w-[82vw]',
+  'rounded-xl px-3 py-2',
+  'text-[12px] leading-relaxed',
+  'shadow-xl ring-1 ring-black/10 dark:ring-white/10',
+  'bg-white/95 dark:bg-gray-800/95',
+  'text-gray-700 dark:text-gray-200',
+  'backdrop-blur',
+  'text-left'
+].join(' '));
+tooltip.setAttribute('role', 'tooltip');
+tooltip.tabIndex = -1; // permite foco dentro do tooltip
+
+// conteúdo enxuto
+const level = shown >= 8 ? 'alto' : shown >= 5 ? 'moderado' : 'baixo';
+tooltip.appendChild(el('div', 'font-semibold mb-1', `Score ${shown}/10 — nível ${level}`));
+tooltip.appendChild(el(
+  'div',
+  '',
+  level === 'alto'
+    ? 'Confiabilidade alta. Ainda assim, verifique detalhes.'
+    : (level === 'moderado'
+        ? 'Confiabilidade moderada. Leia com atenção e peça mais infos.'
+        : 'Confiabilidade baixa. Prefira fontes/ONGs reconhecidas.')
+));
+
+// LINKS enxutos com underline animado
+const linksRow = el('div', 'flex gap-3 mt-2 text-[12px] flex-wrap');
+
+// helper: cria link com underline animado
+const proLink = (href, label) => {
+  const a = el('a', [
+    'relative text-sky-600 dark:text-sky-300 font-medium',
+    'after:content-[""] after:absolute after:left-0 after:bottom-0',
+    'after:w-0 after:h-[2px] after:bg-sky-500 dark:after:bg-sky-400',
+    'after:transition-all after:duration-300',
+    'hover:after:w-full hover:text-sky-700 dark:hover:text-sky-200'
+  ].join(' '), label);
+  a.href = href;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  return a;
+};
+
+linksRow.appendChild(proLink(
+  'https://www.zooplus.pt/magazine/gatos/adotar-um-gato/10-coisas-que-deve-saber-antes-de-adotar-um-gato?utm_source=catbytes',
+  'Zooplus'
+));
+linksRow.appendChild(proLink(
+  'https://omeuanimal.elanco.com/pt/tutores/cuidados-basicos-antes-de-acolher-um-gato-em-casa?utm_source=catbytes',
+  'OmeuAnimal'
+));
+tooltip.appendChild(linksRow);
+
+// seta do balão, apontando para o centro do badge
+const tipArrow = el('span', [
+  'absolute top-full mt-0.5 left-1/2 -translate-x-1/2',
+  'w-2 h-2 rotate-45',
+  'bg-white dark:bg-gray-800',
+  'ring-1 ring-black/5 dark:ring-white/10'
+].join(' '));
+tooltip.appendChild(tipArrow);
+
+// estado + controle de abertura/fechamento
+let isOpen = false;
+let closeTimer = null;
+
+const showTip = () => {
+  tooltip.classList.remove('invisible', 'opacity-0', 'translate-y-1');
+  badgeBtn.classList.add('ring-4', 'ring-sky-300/40', 'scale-105'); // feedback aberto
+  badgeBtn.setAttribute('aria-expanded', 'true');
+  isOpen = true;
+};
+
+const hideTip = () => {
+  tooltip.classList.add('invisible', 'opacity-0', 'translate-y-1');
+  badgeBtn.classList.remove('ring-4', 'ring-sky-300/40', 'scale-105');
+  badgeBtn.setAttribute('aria-expanded', 'false');
+  isOpen = false;
+};
+
+const scheduleClose = (delay = 350) => {
+  clearTimeout(closeTimer);
+  closeTimer = setTimeout(() => { if (isOpen) hideTip(); }, delay);
+};
+const cancelClose = () => { clearTimeout(closeTimer); };
+
+// abre/fecha no clique do badge
+badgeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  isOpen ? hideTip() : showTip();
+});
+
+// interação do mouse/teclado/touch para auto-close
+tipWrap.addEventListener('mouseenter', cancelClose);
+tipWrap.addEventListener('mouseleave', () => scheduleClose(400));
+tooltip.addEventListener('focusin', cancelClose);
+tooltip.addEventListener('focusout', () => scheduleClose(400));
+badgeBtn.addEventListener('blur', () => scheduleClose(400));
+
+document.addEventListener('click', (e) => {
+  if (!tipWrap.contains(e.target)) hideTip();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') hideTip();
+});
+window.addEventListener('scroll', hideTip, { passive: true });
+window.addEventListener('resize', hideTip);
+
+// monta no DOM
+tipWrap.appendChild(badgeBtn);
+tipWrap.appendChild(tooltip);
+badgeWrap.appendChild(tipWrap);
+// === /Tooltip click-only ===
+
+    // Conteúdo (título, fonte, descrição)
+    const content = el('div', 'flex-1 min-w-0');
+
     const titleText = anuncio.titulo || 'Anúncio de Adoção';
     const titleEl = href
       ? (() => {
-        const a = el(
-          'a',
-          'text-lg font-bold text-blue-700 group hover:underline focus:outline-green-500 mr-2 break-normal',
-          titleText
-        );
-        a.href = href;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        return a;
-      })()
-      : el('span', 'text-lg font-bold', titleText);
+          const a = el(
+            'a',
+            [
+              'text-[15px] sm:text-base font-semibold leading-snug',
+              'text-sky-700 dark:text-sky-200', // azul suave no dark
+              'hover:underline underline-offset-2',
+              'break-words hyphens-auto'
+            ].join(' '),
+            titleText
+          );
+          a.href = href;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          clampLines(a, 3);
+          return a;
+        })()
+      : (() => {
+          const span = el(
+            'span',
+            'text-[15px] sm:text-base font-semibold leading-snug break-words hyphens-auto',
+            titleText
+          );
+          clampLines(span, 3);
+          return span;
+        })();
 
     const source = el(
       'span',
-      'text-xs text-gray-500 align-middle',
-      `(${anuncio.fonte || hostname(href)})`
-    );
-    const desc = el(
-      'p',
-      'text-base font-medium text-gray-800 dark:text-gray-100 mt-1 leading-relaxed',
-      anuncio.descricao || ''
+      'text-xs text-zinc-500 dark:text-slate-300 align-middle',
+      ` (${anuncio.fonte || hostname(href)})`
     );
 
+    const desc = el(
+      'p',
+      'mt-1 text-sm sm:text-[15px] text-zinc-700 dark:text-white leading-relaxed break-words hyphens-auto',
+      anuncio.descricao || ''
+    );
+    clampLines(desc, 4);
 
     content.appendChild(titleEl);
     content.appendChild(source);
     content.appendChild(desc);
 
-    card.appendChild(badgeWrap);
-    card.appendChild(content);
+    top.appendChild(badgeWrap);
+    top.appendChild(content);
+    card.appendChild(top);
+
     list.appendChild(card);
   });
 
-  // Aviso quando só há fallbacks
   if (onlyFallbacks) renderSadNotice(container);
 }
 
-// ---------------- Entry point usado pelo main.js ----------------
+/* ---------------- Entry point (lógica original mantida) ---------------- */
 export function initAdoptCat() {
-  // O formulário fica dentro da seção #adopt-cat
   const form = document.querySelector('#adopt-cat form');
   if (!form) return;
 
-  // Garante container de resultados
   let resultsContainer = document.querySelector('#adopt-results-container');
   if (!resultsContainer) {
     resultsContainer = el('div', 'mt-8');
@@ -183,14 +358,12 @@ export function initAdoptCat() {
     form.parentNode.appendChild(resultsContainer);
   }
 
-  // Habilita botão no load
   const submitBtn = form.querySelector('button[type="submit"]');
   if (submitBtn) {
     submitBtn.disabled = false;
     submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
   }
 
-  // Submit
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -201,19 +374,18 @@ export function initAdoptCat() {
     };
 
     resultsContainer.innerHTML =
-      '<div class="text-sm text-gray-600">🔍 Buscando anúncios...</div>';
+      '<div class="text-sm text-zinc-600 dark:text-zinc-300">🔍 Buscando anúncios...</div>';
 
     try {
       const data = await postJSON(NETLIFY_FN, payload);
       renderAdoptionResults(resultsContainer, data);
     } catch (err) {
       console.error('Erro ao buscar anúncios:', err);
-      // Renderiza apenas os fallbacks genéricos
       renderAdoptionResults(resultsContainer, { anuncios: [] });
       resultsContainer.appendChild(
         el(
           'div',
-          'text-red-600 mt-2',
+          'text-rose-600 dark:text-rose-300 mt-2',
           'Erro ao buscar anúncios. Tente novamente em instantes.'
         )
       );

@@ -2,6 +2,25 @@
 
 [English Version](./README.en.md)
 
+<p align="center">
+  <a href="https://app.netlify.com/sites/catbytes/deploys">
+    <img alt="Status do Deploy" src="https://img.shields.io/netlify/452e1169-5579-4b4d-969f-1d8e476441f6?style=for-the-badge&logo=netlify">
+  </a>
+  <a href="https://github.com/ipierette/CatBytes/commits/main">
+    <img alt="Último Commit" src="https://img.shields.io/github/last-commit/ipierette/catbytes-portifolio?style=for-the-badge&logo=github&logoColor=white">
+  </a>
+  <a href="./LICENSE">
+    <img alt="Licença" src="https://img.shields.io/badge/license-Custom-blue?style=for-the-badge">
+  </a>
+  <br />
+  <img alt="HTML5" src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+  <img alt="TailwindCSS" src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
+  <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
+  <a href="https://www.linkedin.com/in/izadora-cury-pierette-7a7754253">
+    <img alt="Fale comigo no LinkedIn" src="https://img.shields.io/badge/-LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white">
+  </a>
+</p>
+
 ---
 
 ## 📖 Sobre o Projeto
@@ -18,7 +37,7 @@ Este projeto foi desenvolvido para apresentar minhas habilidades como desenvolve
 - Componentes interativos com **JavaScript modular**.  
 - **Score da IA** em anúncios, com explicação interativa.  
 - **Uso da IA** para identificar gatinhos, com observações sobre a foto utilizada.
-- Gerador de texto de anúncios **atravéz da IA** com **geração de Estratégia de Postagem**.    
+- Gerador de texto de anúncios **através da IA** com **geração de Estratégia de Postagem**.    
 - Estrutura de CSS organizada em módulos: `reset.css`, `variables.css`, `responsive.css`, `animations.css` etc, pronta para evoluir com vite e react.  
 
 ---
@@ -40,8 +59,25 @@ README.md     → Documentação do projeto
 ---
 
 ## 🚀 Deploy
-O projeto está publicado em **Netlify**.  
-🔗 **Demo online**: <!-- ALTERAR AQUI com link do site -->  
+O projeto está publicado em **Netlify**.
+🔗 **Demo online**: (https://catbytes.netlify.app/)
+
+---
+
+## 💻 Como Executar Localmente(Não é permitida cópia integral do projeto #Licença)
+
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/seu-usuario/catbytes.git](https://github.com/ipierette/catbytes-portifolio)
+    ```
+
+2.  **Navegue até o diretório:**
+    ```bash
+    cd catbytes
+    ```
+
+3.  **Abra o `index.html` no seu navegador:**
+    - Você pode simplesmente abrir o arquivo `index.html` diretamente ou usar uma extensão como o "Live Server" no VS Code para uma melhor experiência de desenvolvimento.
 
 ---
 
@@ -56,12 +92,15 @@ O projeto está publicado em **Netlify**.
 
 ## 📸 Preview
 
-### Versão Desktop
-![Preview Desktop](./images/desktop-catbytes.png)
+<details>
+  <summary>Clique para ver o preview da versão Desktop e Mobile</summary>
 
-### Versão Mobile
-![Preview Mobile](./images/mobile-catbytes.png)
+  ### Versão Desktop
+  <img src="./images/desktop-catbytes.webp" alt="Preview Desktop">
 
+  ### Versão Mobile
+  <img src="./images/mobile-catbytes.webp" alt="Preview Mobile" width="400">
+</details>
 ---
 
 ## 📌 Roadmap Futuro

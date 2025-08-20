@@ -3,7 +3,7 @@ import { initUI } from './modules/ui.js';
 import { initScrollAnimations, initCatPopup } from './modules/animations.js';
 import { initProjectsGallery } from './modules/projectsGallery.js';
 import { initSkillsCarousel } from './modules/skillsCarousel.js';
-
+import { initContactForm } from './modules/contactForm.js';
 import { initIATabs } from './modules/iaTabs.js';
 import { initAdoptCat } from './modules/adoptCat.js';
 import { initGenerateAd } from './modules/generateAd.js';
@@ -23,4 +23,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initIdentifyCat();
 
   initLazyLoad();
+  initContactForm();
 });

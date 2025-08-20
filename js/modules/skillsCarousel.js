@@ -1,6 +1,6 @@
 // public/js/modules/skillsCarousel.js
 
-// DADOS UNIFICADOS (sem alterações desta vez)
+// DADOS UNIFICADOS DOS CARDS
 const skillsData = [
     { icon: 'fas fa-code', title: 'HTML & CSS', description: 'Construção de layouts responsivos com HTML5 semântico e CSS3 avançado, utilizando Flexbox, Grid e animações.', progress: 95, level: 'Gato Mestre', color: '#E44D26' },
     { icon: 'fab fa-js-square', title: 'JavaScript (ES6+)', description: 'Manipulação do DOM, interatividade, requisições assíncronas (Fetch API) e lógica para aplicações web dinâmicas.', progress: 85, level: 'Gato Mestre', color: '#F7DF1E' },
@@ -11,9 +11,10 @@ const skillsData = [
     { icon: 'fas fa-database', title: 'PostgreSQL', description: 'Modelagem e consulta de bancos de dados relacionais, garantindo a integridade e persistência dos dados.', progress: 40, level: 'Ronronado Iniciante', color: '#336791' },
     { icon: 'fas fa-server', title: 'Redis', description: 'Utilização de banco de dados em memória para caching e gerenciamento de sessões, otimizando a performance.', progress: 30, level: 'Ronronado Iniciante', color: '#DC382D' },
     { icon: 'fab fa-docker', title: 'Docker', description: 'Conteinerização de aplicações para garantir consistência entre ambientes de desenvolvimento e produção.', progress: 70, level: 'Miado Intermediário', color: '#2496ED' },
-    { icon: 'fas fa-cloud-upload-alt', title: 'Deploy 24/7 com OCI', description: 'Implantação e manutenção de aplicações backend na Oracle Cloud Infrastructure, garantindo alta disponibilidade.', progress: 70, level: 'Miado Intermediário', color: '#F80000' }
+    { icon: 'fas fa-cloud-upload-alt', title: 'OCI', description: 'Implantação e manutenção de aplicações backend na Oracle Cloud Infrastructure, garantindo alta disponibilidade.', progress: 70, level: 'Miado Intermediário', color: '#ce1477ff' }
 ];
 
+// FUNÇÃO PARA CRIAR CADA CARD INDIVIDUALMENTE
 function createSkillCard(skill) {
     return `
         <div class="skill-card">
@@ -30,6 +31,7 @@ function createSkillCard(skill) {
     `;
 }
 
+// FUNÇÃO PARA ANIMAR AS BARRAS DE PROGRESSO QUANDO VISÍVEIS
 function animateProgressBars() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -47,7 +49,9 @@ function animateProgressBars() {
     });
 }
 
-// FUNÇÃO PRINCIPAL DO CARROSSEL COM LÓGICA DE MOVIMENTO CORRIGIDA
+// ===================================================================
+// FUNÇÃO PRINCIPAL DO CARROSSEL COM LÓGICA DE LOOP INFINITO
+// ===================================================================
 export function initSkillsCarousel() {
     const carousel = document.getElementById('skills-carousel');
     const prevBtn = document.getElementById('prev-skill');
@@ -55,22 +59,11 @@ export function initSkillsCarousel() {
 
     if (!carousel || !prevBtn || !nextBtn) return;
 
-    carousel.innerHTML = skillsData.map(createSkillCard).join('');
-    setTimeout(animateProgressBars, 100);
-
-    let currentIndex = 0;
-    const cards = carousel.querySelectorAll('.skill-card');
-    const totalCards = cards.length;
+    let currentIndex;
+    let cards = [];
     let cardWidth = 0;
     let cardMargin = 0;
-
-    const calculateCardMetrics = () => {
-        if (cards.length === 0) return;
-        const cardElement = cards[0];
-        cardWidth = cardElement.offsetWidth;
-        const styles = window.getComputedStyle(cardElement);
-        cardMargin = parseInt(styles.marginLeft) + parseInt(styles.marginRight);
-    };
+    let isTransitioning = false; // Flag para evitar cliques múltiplos durante a animação
 
     const getVisibleCardsCount = () => {
         if (window.innerWidth >= 1024) return 3;
@@ -78,49 +71,80 @@ export function initSkillsCarousel() {
         return 1;
     };
 
-    const updateCarouselState = () => {
-        if (cards.length === 0) return;
-
+    const setupCarousel = () => {
         const visibleCards = getVisibleCardsCount();
+        
+        // --- LÓGICA DE CLONAGEM PARA O LOOP ---
+        const clonesStart = skillsData.slice(-visibleCards);
+        const clonesEnd = skillsData.slice(0, visibleCards);
+        const allItems = [...clonesStart, ...skillsData, ...clonesEnd];
 
-        // A distância a mover é a largura de um card mais o espaçamento completo
+        carousel.innerHTML = allItems.map(createSkillCard).join('');
+        cards = carousel.querySelectorAll('.skill-card');
+
+        // Calcula as métricas dos cards
+        if (cards.length > 0) {
+            const cardElement = cards[0];
+            cardWidth = cardElement.offsetWidth;
+            const styles = window.getComputedStyle(cardElement);
+            cardMargin = parseInt(styles.marginLeft) + parseInt(styles.marginRight);
+        }
+
+        // Define o ponto de partida inicial (o primeiro item real após os clones)
+        currentIndex = visibleCards;
+        repositionCarousel(false); // Reposiciona sem animação
+        
+        setTimeout(animateProgressBars, 100);
+    };
+
+    const repositionCarousel = (animated = true) => {
         const step = cardWidth + cardMargin;
         const totalMovement = step * currentIndex;
-
+        
+        carousel.style.transition = animated ? 'transform 0.5s ease' : 'none';
         carousel.style.transform = `translateX(-${totalMovement}px)`;
+    };
+    
+    const handleInfiniteJump = () => {
+        isTransitioning = false; // Permite o próximo clique
 
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex >= totalCards - visibleCards;
+        const visibleCards = getVisibleCardsCount();
+        const totalOriginalCards = skillsData.length;
+
+        // Se chegamos no clone do fim, saltamos para o início real
+        if (currentIndex >= totalOriginalCards + visibleCards) {
+            currentIndex = visibleCards;
+            repositionCarousel(false);
+        }
+        
+        // Se chegamos no clone do início, saltamos para o fim real
+        if (currentIndex < visibleCards) {
+            currentIndex = skillsData.length + currentIndex;
+            repositionCarousel(false);
+        }
     };
 
     nextBtn.addEventListener('click', () => {
-        const visibleCards = getVisibleCardsCount();
-        if (currentIndex < totalCards - visibleCards) {
-            currentIndex++;
-            updateCarouselState();
-        }
+        if (isTransitioning) return;
+        isTransitioning = true;
+        currentIndex++;
+        repositionCarousel(true);
+        carousel.addEventListener('transitionend', handleInfiniteJump, { once: true });
     });
 
     prevBtn.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateCarouselState();
-        }
+        if (isTransitioning) return;
+        isTransitioning = true;
+        currentIndex--;
+        repositionCarousel(true);
+        carousel.addEventListener('transitionend', handleInfiniteJump, { once: true });
     });
 
     window.addEventListener('resize', () => {
-        calculateCardMetrics();
-        const visibleCards = getVisibleCardsCount();
-        // Ajusta o índice se a janela diminuir e o índice atual se tornar inválido
-        if (currentIndex > totalCards - visibleCards) {
-            currentIndex = Math.max(0, totalCards - visibleCards);
-        }
-        updateCarouselState();
+        // Reconstrói o carrossel para garantir que as medidas e clones estejam corretos
+        setupCarousel();
     });
 
-    // Um pequeno timeout para garantir que as dimensões dos cards foram calculadas pelo navegador
-    setTimeout(() => {
-        calculateCardMetrics();
-        updateCarouselState();
-    }, 100);
+    // Inicia o carrossel
+    setupCarousel();
 }
