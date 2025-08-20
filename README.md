@@ -58,6 +58,10 @@ README.md     → Documentação do projeto
 
 ---
 
+## Documentação
+- [CHANGELOG](./CHANGELOG.md) — histórico completo de mudanças
+---
+
 ## 🚀 Deploy
 O projeto está publicado em **Netlify**.
 🔗 **Demo online**: (https://catbytes.netlify.app/)
