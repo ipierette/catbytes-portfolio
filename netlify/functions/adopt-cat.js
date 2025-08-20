@@ -2,7 +2,7 @@
 // Versão refatorada com IA (Gemini) para scoring, melhor estrutura e resiliência.
 
 const SOURCE_SITES = [
-  'olx.com.br', 'adoteumgatinho.org.br', 'catland.org.br', 'adotepetz.com.br',
+dsx  'olx.com.br', 'adoteumgatinho.org.br', 'catland.org.br', 'adotepetz.com.br', // Adicionado 'www.' para compatibilidade
   'adotebicho.com.br', 'paraisodosfocinhos.com.br', 'adoteumpet.com.br'
 ];
 const BAD_WORDS = [
@@ -25,6 +25,14 @@ const jsonResponse = (status, data) => ({
   body: JSON.stringify(data),
 });
 
+// Helper para extrair o hostname limpo de uma URL
+function getHostname(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return null;
+  }
+}
 // Helper para pontuar um anúncio usando a IA do Gemini
 async function getAIScore(anuncio, apiKey) {
   const { titulo, descricao, fonte } = anuncio;
@@ -64,10 +72,14 @@ async function getAIScore(anuncio, apiKey) {
         return parsed;
     }
 
-    return { score: 4, reason: "Não foi possível analisar com a IA.", is_adopted: false };
+    // Se a IA falhar ou retornar JSON inválido, retorna null.
+    // Isso sinaliza ao handler para usar o mecanismo de fallback (simpleScore).
+    console.warn("AI response was invalid or malformed. Falling back to simple scoring.");
+    return null;
   } catch (error) {
     console.error("Erro na chamada da IA:", error);
-    return { score: 4, reason: "Falha ao contatar a IA.", is_adopted: false };
+    // Em caso de erro na chamada da API, também retorna null para o fallback.
+    return null;
   }
 }
 
@@ -107,7 +119,7 @@ async function runQueryAndParse(query, apiKey) {
         titulo: r.title || 'Anúncio de Adoção',
         descricao: r.snippet || '',
         url: r.link || '',
-        fonte: r.displayed_link || r.source || 'desconhecida',
+        fonte: getHostname(r.link || r.displayed_link) || 'desconhecida', // Usa getHostname aqui
         score: 0,
       }))
       .filter(a =>
@@ -187,19 +199,23 @@ export const handler = async (event) => {
 
       anuncios.forEach((anuncio, index) => {
         const aiResult = scores[index];
-        if (aiResult && aiResult.score) {
+        // Se a IA retornou um resultado válido, usa o score dela.
+        if (aiResult && typeof aiResult.score === 'number') {
           anuncio.score = aiResult.score / 10; // Normaliza para 0-1 para o frontend
           anuncio.is_adopted = aiResult.is_adopted || false; // Adiciona o status de adoção
         } else {
-          // Usa o scoring antigo como fallback
+          // Caso contrário (AI falhou e retornou null), usa o scoring antigo como fallback.
           anuncio.score = getSimpleScore(anuncio, body) / 10;
           anuncio.is_adopted = false; // Padrão para o fallback
         }
 
         // --- LÓGICA DE OVERRIDE PARA ONGs CONFIÁVEIS ---
         // Garante que anúncios de ONGs de topo, mesmo que "adotados", recebam score máximo.
-        const isTopTierNgo = ['adoteumgatinho.org.br', 'catland.org.br'].includes(anuncio.fonte);
-        const mentionsAdopted = /adotad[oa]/i.test(anuncio.titulo + ' ' + anuncio.descricao);
+        // Verifica se a fonte normalizada está na lista de ONGs de topo
+        const isTopTierNgo = [
+          'adoteumgatinho.org.br', 'catland.org.br'
+        ].includes(anuncio.fonte);
+        const mentionsAdopted = /adotad[oa]|encontrou um lar|já foi adotado|não está mais disponível/i.test(anuncio.titulo + ' ' + anuncio.descricao);
 
         if (isTopTierNgo && mentionsAdopted) {
           anuncio.score = 1.0; // Score máximo (10/10)
