@@ -1,3 +1,4 @@
+
 // public/js/modules/adoptCat.js
 // Mantém o fluxo original (submit -> Netlify -> render).
 // Alterações APENAS visuais/responsividade (cards + badge do score).
@@ -124,17 +125,17 @@ export function renderAdoptionResults(container, data, { append = false } = {}) 
   anuncios.forEach((anuncio) => {
     const href = bestUrl(anuncio);
 
-    const card = el(
-      'article',
-      [
-        'flex flex-col gap-2',
-        'rounded-xl border border-zinc-200 dark:border-zinc-700',
-        // 👇 fundo claro no light, “midnight” no dark (sem classe custom)
-        'bg-white dark:bg-[rgb(11,19,32)]',
-        'shadow-sm hover:shadow-md transition',
-        'p-4 sm:p-5'
-      ].join(' ')
-    );
+ const card = el(
+  'article',
+  [
+    'flex flex-col gap-2',
+    'rounded-xl border border-zinc-200 dark:border-zinc-700',
+    // 👇 fundo claro no light, “midnight” no dark (sem classe custom)
+    'bg-white dark:bg-[rgb(11,19,32)]',
+    'shadow-sm hover:shadow-md transition',
+    'p-4 sm:p-5'
+  ].join(' ')
+);
 
     // Layout responsivo: coluna no mobile, linha em telas maiores.
     // O texto também se alinha de acordo com o tamanho da tela.
@@ -154,216 +155,155 @@ export function renderAdoptionResults(container, data, { append = false } = {}) 
     if (rawScore <= 1) rawScore *= 10;                  // se veio 0–1, converte
     rawScore = Math.max(1, Math.min(10, rawScore));     // clamp 1–10
     const shown = Math.round(rawScore);
-    // status: IA entrou (backend marcou _ai_failed=false) ou caiu no fallback
-    const usedAI = anuncio && anuncio._ai_failed === false;
-    // no fallback, mostramos "—" no badge pra ficar claro que é estimativa
-    const displayScore = usedAI ? String(shown) : "—";
 
-    const palette = !usedAI
-      ? { bg: 'bg-zinc-500', ring: 'ring-zinc-300/60' } // fallback → cinza
-      : rawScore >= 8
+    const palette =
+      rawScore >= 8
         ? { bg: 'bg-emerald-500', ring: 'ring-emerald-300/60' }
         : rawScore >= 5
-          ? { bg: 'bg-amber-500', ring: 'ring-amber-300/60' }
-          : { bg: 'bg-rose-500', ring: 'ring-rose-300/60' };
+          ? { bg: 'bg-amber-500',   ring: 'ring-amber-300/60' }
+          : { bg: 'bg-rose-500',     ring: 'ring-rose-300/60' };
 
+// === Tooltip click-only com auto-close, links enxutos e feedback no badge ===
 
-    // === Tooltip click-only com auto-close, links enxutos e feedback no badge ===
+// wrapper relativo para posicionar tooltip em relação ao badge
+const tipWrap = el('div', 'relative inline-block');
 
-    // wrapper relativo para posicionar tooltip em relação ao badge
-    const tipWrap = el('div', 'relative inline-block');
+// BOTÃO (badge clicável) — mantém seu visual + efeito de “levantar” no hover
+const badgeBtn = el('button', [
+  'inline-grid place-items-center',
+  'w-12 h-12 rounded-full text-sm font-bold select-none',
+  'text-white cursor-pointer',
+  'ring-2 ring-offset-2',
+  'ring-offset-white dark:ring-offset-zinc-900',
+  'transition-transform transition-shadow duration-200',
+  'hover:-translate-y-1 hover:shadow-lg',
+  palette.bg, palette.ring
+].join(' '), String(shown)); // use "shown" (ou score10) conforme seu arquivo
+badgeBtn.type = 'button';
+badgeBtn.setAttribute('aria-haspopup', 'dialog');
+badgeBtn.setAttribute('aria-expanded', 'false');
+badgeBtn.setAttribute('aria-label', `Score ${shown} de 10`);
 
-    // BOTÃO (badge clicável) — mantém seu visual + efeito de “levantar” no hover
-    const badgeBtn = el('button', [
-      'inline-grid place-items-center',
-      'w-12 h-12 rounded-full text-sm font-bold select-none',
-      'text-white cursor-pointer',
-      'ring-2 ring-offset-2',
-      'ring-offset-white dark:ring-offset-zinc-900',
-      'transition-transform transition-shadow duration-200',
-      'hover:-translate-y-1 hover:shadow-lg',
-      palette.bg, palette.ring
-    ].join(' '), displayScore); // use "shown" (ou score10) conforme seu arquivo
-    badgeBtn.type = 'button';
-    badgeBtn.setAttribute('aria-haspopup', 'dialog');
-    badgeBtn.setAttribute('aria-expanded', 'false');
-    badgeBtn.setAttribute(
-      'aria-label',
-      usedAI ? `Score ${shown} de 10` : 'Score aproximado (fallback)'
-    );
+// TOOLTIP (inicialmente fechado) — acima do badge, centralizado
+const tooltip = el('div', [
+  'invisible opacity-0 translate-y-1',
+  'transition',
+  'absolute z-50',
+  'left-1/2 -translate-x-1/2',
+  'bottom-full mb-2',                 // fica acima do botão
+  'w-64 max-w-[82vw]',
+  'rounded-xl px-3 py-2',
+  'text-[12px] leading-relaxed',
+  'shadow-xl ring-1 ring-black/10 dark:ring-white/10',
+  'bg-white/95 dark:bg-gray-800/95',
+  'text-gray-700 dark:text-gray-200',
+  'backdrop-blur',
+  'text-left'
+].join(' '));
+tooltip.setAttribute('role', 'tooltip');
+tooltip.tabIndex = -1; // permite foco dentro do tooltip
 
+// conteúdo enxuto
+const level = shown >= 8 ? 'alto' : shown >= 5 ? 'moderado' : 'baixo';
+tooltip.appendChild(el('div', 'font-semibold mb-1', `Score ${shown}/10 — nível ${level}`));
+tooltip.appendChild(el(
+  'div',
+  '',
+  level === 'alto'
+    ? 'Confiabilidade alta. Ainda assim, verifique detalhes.'
+    : (level === 'moderado'
+        ? 'Confiabilidade moderada. Leia com atenção e peça mais infos.'
+        : 'Confiabilidade baixa. Prefira fontes/ONGs reconhecidas.')
+));
 
-    // TOOLTIP (inicialmente fechado) — acima do badge, centralizado
-    const tooltip = el('div', [
-      'invisible opacity-0 translate-y-1',
-      'transition',
-      'absolute z-50',
-      'left-1/2 -translate-x-1/2',
-      'bottom-full mb-2',                 // fica acima do botão
-      'w-64 max-w-[82vw]',
-      'rounded-xl px-3 py-2',
-      'text-[12px] leading-relaxed',
-      'shadow-xl ring-1 ring-black/10 dark:ring-white/10',
-      'bg-white/95 dark:bg-gray-800/95',
-      'text-gray-700 dark:text-gray-200',
-      'backdrop-blur',
-      'text-left'
-    ].join(' '));
-    tooltip.setAttribute('role', 'tooltip');
-    tooltip.tabIndex = -1; // permite foco dentro do tooltip
+// LINKS enxutos com underline animado
+const linksRow = el('div', 'flex gap-3 mt-2 text-[12px] flex-wrap');
 
-    // conteúdo enxuto
-    const level = usedAI
-  ? (shown >= 8 ? 'excelente' : shown >= 5 ? 'bom' : 'baixo')
-  : 'aproximado';
-const isAdopted = anuncio.is_adopted;
+// helper: cria link com underline animado
+const proLink = (href, label) => {
+  const a = el('a', [
+    'relative text-sky-600 dark:text-sky-300 font-medium',
+    'after:content-[""] after:absolute after:left-0 after:bottom-0',
+    'after:w-0 after:h-[2px] after:bg-sky-500 dark:after:bg-sky-400',
+    'after:transition-all after:duration-300',
+    'hover:after:w-full hover:text-sky-700 dark:hover:text-sky-200'
+  ].join(' '), label);
+  a.href = href;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  return a;
+};
 
-tooltip.appendChild(
-  el('div', 'font-semibold mb-1',
-     usedAI ? `Score ${shown}/10 — Nível ${level}` : 'Score aproximado (fallback)')
-);
+linksRow.appendChild(proLink(
+  'https://www.zooplus.pt/magazine/gatos/adotar-um-gato/10-coisas-que-deve-saber-antes-de-adotar-um-gato?utm_source=catbytes',
+  'Zooplus'
+));
+linksRow.appendChild(proLink(
+  'https://omeuanimal.elanco.com/pt/tutores/cuidados-basicos-antes-de-acolher-um-gato-em-casa?utm_source=catbytes',
+  'OmeuAnimal'
+));
+tooltip.appendChild(linksRow);
 
-// se o backend sinalizar “adotado”
-if (isAdopted) {
-  const adoptedNotice = el(
-    'div',
-    'mt-1.5 p-1.5 rounded-md bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-200 text-center font-semibold text-[11px]',
-    '🐾 Gatinho já adotado!'
-  );
-  tooltip.appendChild(adoptedNotice);
-}
+// seta do balão, apontando para o centro do badge
+const tipArrow = el('span', [
+  'absolute top-full mt-0.5 left-1/2 -translate-x-1/2',
+  'w-2 h-2 rotate-45',
+  'bg-white dark:bg-gray-800',
+  'ring-1 ring-black/5 dark:ring-white/10'
+].join(' '));
+tooltip.appendChild(tipArrow);
 
-// se veio uma justificativa da IA, mostre
-if (anuncio.reason) {
-  tooltip.appendChild(el(
-    'div',
-    'mt-1.5 italic opacity-80',
-    anuncio.reason
-  ));
-} else {
-  const descriptionText = usedAI
-    ? (shown >= 8
-        ? 'Confiabilidade excelente de uma fonte confiável.'
-        : shown >= 5
-          ? 'Confiabilidade boa. Leia o anúncio com atenção.'
-          : 'Confiabilidade baixa. Prefira ONGs conhecidas.')
-    : 'Estimativa baseada em sinais do texto e fonte (sem IA).';
-  tooltip.appendChild(el('div','mt-1.5', descriptionText));
-}
+// estado + controle de abertura/fechamento
+let isOpen = false;
+let closeTimer = null;
 
+const showTip = () => {
+  tooltip.classList.remove('invisible', 'opacity-0', 'translate-y-1');
+  badgeBtn.classList.add('ring-4', 'ring-sky-300/40', 'scale-105'); // feedback aberto
+  badgeBtn.setAttribute('aria-expanded', 'true');
+  isOpen = true;
+};
 
-    if (isAdopted) {
-      const adoptedNotice = el(
-        'div',
-        'mt-1.5 p-1.5 rounded-md bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-200 text-center font-semibold text-[11px]',
-        '🐾 Gatinho já adotado!'
-      );
-      tooltip.appendChild(adoptedNotice);
-    }
+const hideTip = () => {
+  tooltip.classList.add('invisible', 'opacity-0', 'translate-y-1');
+  badgeBtn.classList.remove('ring-4', 'ring-sky-300/40', 'scale-105');
+  badgeBtn.setAttribute('aria-expanded', 'false');
+  isOpen = false;
+};
 
-    const descriptionText =
-      level === 'excelente'
-        ? (isAdopted
-          ? 'Este é um ótimo exemplo de anúncio. Clique para conhecer a ONG e ver outros gatinhos disponíveis!'
-          : 'Confiabilidade excelente. Anúncio detalhado de uma fonte confiável.')
-        : level === 'bom'
-          ? 'Confiabilidade boa. Leia o anúncio com atenção e verifique as informações.'
-          : 'Confiabilidade baixa. Proceda com cautela e prefira anúncios de ONGs conhecidas.';
+const scheduleClose = (delay = 350) => {
+  clearTimeout(closeTimer);
+  closeTimer = setTimeout(() => { if (isOpen) hideTip(); }, delay);
+};
+const cancelClose = () => { clearTimeout(closeTimer); };
 
-    tooltip.appendChild(el(
-      'div',
-      'mt-1.5',
-      descriptionText
-    ));
+// abre/fecha no clique do badge
+badgeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  isOpen ? hideTip() : showTip();
+});
 
-    // LINKS enxutos com underline animado
-    const linksRow = el('div', 'flex gap-3 mt-2 text-[12px] flex-wrap');
+// interação do mouse/teclado/touch para auto-close
+tipWrap.addEventListener('mouseenter', cancelClose);
+tipWrap.addEventListener('mouseleave', () => scheduleClose(400));
+tooltip.addEventListener('focusin', cancelClose);
+tooltip.addEventListener('focusout', () => scheduleClose(400));
+badgeBtn.addEventListener('blur', () => scheduleClose(400));
 
-    // helper: cria link com underline animado
-    const proLink = (href, label) => {
-      const a = el('a', [
-        'relative text-sky-600 dark:text-sky-300 font-medium',
-        'after:content-[""] after:absolute after:left-0 after:bottom-0',
-        'after:w-0 after:h-[2px] after:bg-sky-500 dark:after:bg-sky-400',
-        'after:transition-all after:duration-300',
-        'hover:after:w-full hover:text-sky-700 dark:hover:text-sky-200'
-      ].join(' '), label);
-      a.href = href;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      return a;
-    };
+document.addEventListener('click', (e) => {
+  if (!tipWrap.contains(e.target)) hideTip();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') hideTip();
+});
+window.addEventListener('scroll', hideTip, { passive: true });
+window.addEventListener('resize', hideTip);
 
-    linksRow.appendChild(proLink(
-      'https://www.zooplus.pt/magazine/gatos/adotar-um-gato/10-coisas-que-deve-saber-antes-de-adotar-um-gato?utm_source=catbytes',
-      'Zooplus'
-    ));
-    linksRow.appendChild(proLink(
-      'https://omeuanimal.elanco.com/pt/tutores/cuidados-basicos-antes-de-acolher-um-gato-em-casa?utm_source=catbytes',
-      'OmeuAnimal'
-    ));
-    tooltip.appendChild(linksRow);
-
-    // seta do balão, apontando para o centro do badge
-    const tipArrow = el('span', [
-      'absolute top-full mt-0.5 left-1/2 -translate-x-1/2',
-      'w-2 h-2 rotate-45',
-      'bg-white dark:bg-gray-800',
-      'ring-1 ring-black/5 dark:ring-white/10'
-    ].join(' '));
-    tooltip.appendChild(tipArrow);
-
-    // estado + controle de abertura/fechamento
-    let isOpen = false;
-    let closeTimer = null;
-
-    const showTip = () => {
-      tooltip.classList.remove('invisible', 'opacity-0', 'translate-y-1');
-      badgeBtn.classList.add('ring-4', 'ring-sky-300/40', 'scale-105'); // feedback aberto
-      badgeBtn.setAttribute('aria-expanded', 'true');
-      isOpen = true;
-    };
-
-    const hideTip = () => {
-      tooltip.classList.add('invisible', 'opacity-0', 'translate-y-1');
-      badgeBtn.classList.remove('ring-4', 'ring-sky-300/40', 'scale-105');
-      badgeBtn.setAttribute('aria-expanded', 'false');
-      isOpen = false;
-    };
-
-    const scheduleClose = (delay = 350) => {
-      clearTimeout(closeTimer);
-      closeTimer = setTimeout(() => { if (isOpen) hideTip(); }, delay);
-    };
-    const cancelClose = () => { clearTimeout(closeTimer); };
-
-    // abre/fecha no clique do badge
-    badgeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      isOpen ? hideTip() : showTip();
-    });
-
-    // interação do mouse/teclado/touch para auto-close
-    tipWrap.addEventListener('mouseenter', cancelClose);
-    tipWrap.addEventListener('mouseleave', () => scheduleClose(400));
-    tooltip.addEventListener('focusin', cancelClose);
-    tooltip.addEventListener('focusout', () => scheduleClose(400));
-    badgeBtn.addEventListener('blur', () => scheduleClose(400));
-
-    document.addEventListener('click', (e) => {
-      if (!tipWrap.contains(e.target)) hideTip();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') hideTip();
-    });
-    window.addEventListener('scroll', hideTip, { passive: true });
-    window.addEventListener('resize', hideTip);
-
-    // monta no DOM
-    tipWrap.appendChild(badgeBtn);
-    tipWrap.appendChild(tooltip);
-    badgeWrap.appendChild(tipWrap);
-    // === /Tooltip click-only ===
+// monta no DOM
+tipWrap.appendChild(badgeBtn);
+tipWrap.appendChild(tooltip);
+badgeWrap.appendChild(tipWrap);
+// === /Tooltip click-only ===
 
     // Conteúdo (título, fonte, descrição)
     // Ocupa toda a largura no mobile e se torna flexível em telas maiores.
@@ -372,31 +312,31 @@ if (anuncio.reason) {
     const titleText = anuncio.titulo || 'Anúncio de Adoção';
     const titleEl = href
       ? (() => {
-        const a = el(
-          'a',
-          [
-            'text-[15px] sm:text-base font-semibold leading-snug',
-            'text-sky-700 dark:text-sky-200', // azul suave no dark
-            'hover:underline underline-offset-2',
-            'break-words hyphens-auto'
-          ].join(' '),
-          titleText
-        );
-        a.href = href;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        clampLines(a, 3);
-        return a;
-      })()
+          const a = el(
+            'a',
+            [
+              'text-[15px] sm:text-base font-semibold leading-snug',
+              'text-sky-700 dark:text-sky-200', // azul suave no dark
+              'hover:underline underline-offset-2',
+              'break-words hyphens-auto'
+            ].join(' '),
+            titleText
+          );
+          a.href = href;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          clampLines(a, 3);
+          return a;
+        })()
       : (() => {
-        const span = el(
-          'span',
-          'text-[15px] sm:text-base font-semibold leading-snug break-words hyphens-auto',
-          titleText
-        );
-        clampLines(span, 3);
-        return span;
-      })();
+          const span = el(
+            'span',
+            'text-[15px] sm:text-base font-semibold leading-snug break-words hyphens-auto',
+            titleText
+          );
+          clampLines(span, 3);
+          return span;
+        })();
 
     const source = el(
       'span',
