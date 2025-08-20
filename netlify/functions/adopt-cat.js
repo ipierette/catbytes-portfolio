@@ -31,16 +31,16 @@ async function getAIScore(anuncio, apiKey) {
   if (!apiKey) return { score: 5, reason: "Chave da IA não configurada." };
 
   const prompt = `
-    Você é um assistente de IA especialista em avaliar a qualidade e confiabilidade de anúncios de adoção de gatos para um portal no Brasil.
-    Analise o título, a descrição e a fonte do anúncio.
-    Retorne APENAS um objeto JSON com o seguinte formato: {"score": <de 1 a 10>, "reason": "Justificativa curta"}.
+    Você é um assistente de IA especialista em avaliar a qualidade de anúncios de adoção de gatos no Brasil.
+    Analise o título, descrição e fonte.
+    Retorne APENAS um objeto JSON com o formato: {"score": <1-10>, "reason": "Justificativa curta", "is_adopted": <true/false>}.
 
-    CRITÉRIOS DE PONTUAÇÃO:
-    - **Score 9-10 (Excelente):** Anúncio de uma ONG reconhecida (como adoteumgatinho.org.br, catland.org.br). O anúncio é detalhado, menciona castração, vacinas, temperamento e tem uma história. **Se mencionar "taxa de adoção" para cobrir custos, isso é um sinal POSITIVO de uma ONG séria, então mantenha a nota alta.** Mesmo que o snippet do Google diga "ADOTADO", isso é um sinal de sucesso da ONG, então mantenha a nota alta.
-    - **Score 7-8 (Bom):** Anúncio claro e detalhado de outras fontes. Contém informações essenciais como idade, se é castrado, e contato. Inspira confiança.
-    - **Score 5-6 (Razoável):** Anúncio com informações básicas, mas sem muitos detalhes. Ex: "Gato para adoção, contato X". É válido, mas requer mais investigação do usuário.
-    - **Score 3-4 (Baixo):** Anúncio muito vago, com pouca informação, ou que parece suspeito/comercial. Snippets curtos ou que não parecem ser de adoção.
-    - **Score 1-2 (Ruim):** Provavelmente não é um anúncio de adoção ou contém palavras que indicam venda explícita (ex: "preço", "valor de venda").
+    CRITÉRIOS DE PONTUAÇÃO (3 NÍVEIS):
+    - **Excelente (8-10):** Anúncio de ONG reconhecida (adoteumgatinho.org.br, catland.org.br). É detalhado, com informações sobre castração, vacinas, temperamento.
+      - **IMPORTANTE:** Se o anúncio mencionar "ADOTADO", "ADOTADA", etc., isso é um SINAL POSITIVO. Mantenha o score alto (9 ou 10) e defina "is_adopted": true. O objetivo é levar o usuário a conhecer a ONG.
+      - Se mencionar "taxa de adoção", também é um sinal positivo de uma ONG séria.
+    - **Bom (5-7):** Anúncio claro de outras fontes, com informações essenciais. Inspira confiança, mas não é de uma ONG de topo.
+    - **Baixo (1-4):** Anúncio vago, suspeito, com pouca informação ou que pareça comercial (venda explícita).
 
     INFORMAÇÕES DO ANÚNCIO:
     - Título: "${titulo}"
@@ -56,12 +56,17 @@ async function getAIScore(anuncio, apiKey) {
     const result = await model.generateContent(prompt);
     const text = result.response.text();
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) return JSON.parse(jsonMatch[0]);
+    if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        // Garante que a propriedade is_adopted sempre exista como booleano
+        parsed.is_adopted = !!parsed.is_adopted;
+        return parsed;
+    }
 
-    return { score: 4, reason: "Não foi possível analisar com a IA." };
+    return { score: 4, reason: "Não foi possível analisar com a IA.", is_adopted: false };
   } catch (error) {
     console.error("Erro na chamada da IA:", error);
-    return { score: 4, reason: "Falha ao contatar a IA." };
+    return { score: 4, reason: "Falha ao contatar a IA.", is_adopted: false };
   }
 }
 
@@ -183,9 +188,11 @@ export const handler = async (event) => {
         const aiResult = scores[index];
         if (aiResult && aiResult.score) {
           anuncio.score = aiResult.score / 10; // Normaliza para 0-1 para o frontend
+          anuncio.is_adopted = aiResult.is_adopted || false; // Adiciona o status de adoção
         } else {
           // Usa o scoring antigo como fallback
           anuncio.score = getSimpleScore(anuncio, body) / 10;
+          anuncio.is_adopted = false; // Padrão para o fallback
         }
       });
 

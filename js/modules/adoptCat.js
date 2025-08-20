@@ -203,16 +203,33 @@ tooltip.setAttribute('role', 'tooltip');
 tooltip.tabIndex = -1; // permite foco dentro do tooltip
 
 // conteúdo enxuto
-const level = shown >= 8 ? 'alto' : shown >= 5 ? 'moderado' : 'baixo';
-tooltip.appendChild(el('div', 'font-semibold mb-1', `Score ${shown}/10 — nível ${level}`));
+const level = shown >= 8 ? 'excelente' : shown >= 5 ? 'bom' : 'baixo';
+const isAdopted = anuncio.is_adopted;
+
+tooltip.appendChild(el('div', 'font-semibold mb-1', `Score ${shown}/10 — Nível ${level}`));
+
+if (isAdopted) {
+    const adoptedNotice = el(
+        'div',
+        'mt-1.5 p-1.5 rounded-md bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-200 text-center font-semibold text-[11px]',
+        '🐾 Gatinho já adotado!'
+    );
+    tooltip.appendChild(adoptedNotice);
+}
+
+const descriptionText =
+    level === 'excelente'
+        ? (isAdopted
+            ? 'Este é um ótimo exemplo de anúncio. Clique para conhecer a ONG e ver outros gatinhos disponíveis!'
+            : 'Confiabilidade excelente. Anúncio detalhado de uma fonte confiável.')
+        : level === 'bom'
+            ? 'Confiabilidade boa. Leia o anúncio com atenção e verifique as informações.'
+            : 'Confiabilidade baixa. Proceda com cautela e prefira anúncios de ONGs conhecidas.';
+
 tooltip.appendChild(el(
   'div',
-  '',
-  level === 'alto'
-    ? 'Confiabilidade alta. Ainda assim, verifique detalhes.'
-    : (level === 'moderado'
-        ? 'Confiabilidade moderada. Leia com atenção e peça mais infos.'
-        : 'Confiabilidade baixa. Prefira fontes/ONGs reconhecidas.')
+  'mt-1.5',
+  descriptionText
 ));
 
 // LINKS enxutos com underline animado
