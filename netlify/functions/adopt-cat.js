@@ -33,12 +33,25 @@ async function withTimeout(promise, ms) {
 
 async function geminiRESTCall(prompt, apiKey) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+
   const body = {
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     generationConfig: {
       temperature: 0.2,
-      maxOutputTokens: 256,
-    },
+      maxOutputTokens: 128,
+      // força retorno em JSON puro
+      responseMimeType: "application/json",
+      // schema opcional para “ensinar” o formato
+      responseSchema: {
+        type: "OBJECT",
+        properties: {
+          score: { type: "INTEGER" },
+          reason: { type: "STRING" },
+          is_adopted: { type: "BOOLEAN" }
+        },
+        required: ["score", "reason", "is_adopted"]
+      }
+    }
   };
 
   const res = await withTimeout(fetch(url, {
@@ -53,26 +66,27 @@ async function geminiRESTCall(prompt, apiKey) {
   }
 
   const data = await res.json();
-  // caminho padrão do texto
+  // com responseMimeType=application/json, o texto costuma vir como JSON puro
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
   return typeof text === 'string' ? text : '';
 }
 
-function extractJsonObject(textRaw) {
-  const cleaned = (textRaw || '')
-    .replace(/```json/gi, '')
-    .replace(/```/g, '')
-    .trim();
 
+function extractJsonObject(textRaw) {
+  if (!textRaw) return null;
+
+  // 1) tenta parse direto (esperado com responseMimeType=application/json)
+  try {
+    return JSON.parse(textRaw);
+  } catch {}
+
+  // 2) fallback: limpa markdown e extrai o primeiro {...}
+  const cleaned = String(textRaw).replace(/```json/gi, '').replace(/```/g, '').trim();
   const match = cleaned.match(/\{[\s\S]*\}/);
   if (!match) return null;
-
-  try {
-    return JSON.parse(match[0]);
-  } catch {
-    return null;
-  }
+  try { return JSON.parse(match[0]); } catch { return null; }
 }
+
 
 // Helper para pontuar um anúncio usando a IA do Gemini (REST)
 async function getAIScore(anuncio, apiKey) {
@@ -83,12 +97,15 @@ async function getAIScore(anuncio, apiKey) {
     return null; // deixa o fallback atuar
   }
 
-  const prompt = `
-Responda **apenas** com um JSON válido (sem markdown), no formato:
+const prompt = `
+Avalie o anúncio de adoção de gato e responda **apenas** com JSON válido.
+
+Formato exato:
 {"score": <1-10>, "reason": "<curta>", "is_adopted": <true|false>}
 
-Regras de avaliação:
-- 8-10: ONG reconhecida (adoteumgatinho.org.br, catland.org.br), anúncio detalhado (castração, vacinas, temperamento). Se constar "adotado"/"adotada": manter 9-10 e is_adopted=true. "taxa de adoção" é positivo.
+Regras:
+- 8-10: ONG reconhecida (adoteumgatinho.org.br, catland.org.br) e/ou descrição detalhada (castrado, vacinas, temperamento).
+  Se "adotado" ou "adotada": mantenha 9-10 e is_adopted=true. "taxa de adoção" é positivo.
 - 4-7: bom/ok, confiável.
 - 1-3: vago/suspeito/comercial (venda explícita).
 
@@ -97,6 +114,7 @@ Titulo: ${JSON.stringify(titulo || "")}
 Descricao: ${JSON.stringify(descricao || "")}
 Fonte: ${JSON.stringify(fonte || "")}
 `.trim();
+
 
   try {
     const text = await geminiRESTCall(prompt, apiKey);
