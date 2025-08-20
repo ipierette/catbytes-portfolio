@@ -26,20 +26,25 @@ const jsonResponse = (status, data) => ({
 
 // Helper para pontuar um anúncio usando a IA do Gemini
 async function getAIScore(anuncio, apiKey) {
-  const { titulo, descricao } = anuncio;
+  const { titulo, descricao, fonte } = anuncio;
   if (!apiKey) return { score: 5, reason: "Chave da IA não configurada." };
 
   const prompt = `
-    Você é um assistente de IA treinado para avaliar a qualidade e confiabilidade de anúncios de adoção de animais.
-    Analise o título e a descrição do anúncio fornecidos.
+    Você é um assistente de IA especialista em avaliar a qualidade e confiabilidade de anúncios de adoção de gatos para um portal no Brasil.
+    Analise o título, a descrição e a fonte do anúncio.
     Retorne APENAS um objeto JSON com o seguinte formato: {"score": <de 1 a 10>, "reason": "Justificativa curta"}.
 
-    - Score 1-3 (Baixo): Anúncio vago, com pouca informação, ou que parece suspeito.
-    - Score 4-7 (Médio): Anúncio razoável, com informações básicas, mas que poderia ser mais detalhado.
-    - Score 8-10 (Alto): Anúncio claro, detalhado, que inspira confiança, mencionando cuidados, temperamento, etc.
+    CRITÉRIOS DE PONTUAÇÃO:
+    - **Score 9-10 (Excelente):** Anúncio de uma ONG reconhecida (como adoteumgatinho.org.br, catland.org.br). O anúncio é detalhado, menciona castração, vacinas, temperamento e tem uma história. Mesmo que o snippet do Google diga "ADOTADO", isso é um sinal de sucesso da ONG, então mantenha a nota alta.
+    - **Score 7-8 (Bom):** Anúncio claro e detalhado de outras fontes. Contém informações essenciais como idade, se é castrado, e contato. Inspira confiança.
+    - **Score 5-6 (Razoável):** Anúncio com informações básicas, mas sem muitos detalhes. Ex: "Gato para adoção, contato X". É válido, mas requer mais investigação do usuário.
+    - **Score 3-4 (Baixo):** Anúncio muito vago, com pouca informação, ou que parece suspeito/comercial. Snippets curtos ou que não parecem ser de adoção.
+    - **Score 1-2 (Ruim):** Provavelmente não é um anúncio de adoção ou contém palavras que indicam venda.
 
-    Título: "${titulo}"
-    Descrição: "${descricao}"
+    INFORMAÇÕES DO ANÚNCIO:
+    - Título: "${titulo}"
+    - Descrição: "${descricao}"
+    - Fonte: "${fonte}"
   `;
 
   try {
@@ -147,9 +152,8 @@ export const handler = async (event) => {
         }
       });
 
-      // Ordena pelo score e pega os 6 melhores
+      // Ordena pelo score
       anuncios.sort((a, b) => (b.score || 0) - (a.score || 0));
-      anuncios = anuncios.slice(0, 6);
     }
 
     if (!anuncios.length) {

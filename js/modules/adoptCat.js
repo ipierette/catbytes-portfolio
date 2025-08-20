@@ -356,6 +356,12 @@ export function initAdoptCat() {
   const form = document.querySelector('#adopt-cat form');
   if (!form) return;
 
+  // --- State para paginação ---
+  let allAds = [];
+  let currentPage = 0;
+  let backendResponse = {};
+  const ADS_PER_PAGE = 6;
+
   let resultsContainer = document.querySelector('#adopt-results-container');
   if (!resultsContainer) {
     resultsContainer = el('div', 'mt-8');
@@ -363,6 +369,38 @@ export function initAdoptCat() {
     resultsContainer.setAttribute('aria-live', 'polite');
     form.parentNode.appendChild(resultsContainer);
   }
+
+  const renderCurrentPage = () => {
+    const startIndex = currentPage * ADS_PER_PAGE;
+    const endIndex = startIndex + ADS_PER_PAGE;
+    const adsForPage = allAds.slice(startIndex, endIndex);
+
+    const dataForRender = {
+      anuncios: adsForPage,
+      // Mensagem e meta só na primeira página para não repetir
+      mensagem: currentPage === 0 ? backendResponse.mensagem : null,
+      meta: backendResponse.meta,
+    };
+
+    // A função original limpa o container, o que é o comportamento desejado ("sumir e aparecer").
+    renderAdoptionResults(resultsContainer, dataForRender);
+
+    // Adiciona o botão "Mostrar mais" se houver mais anúncios
+    const hasMore = allAds.length > endIndex;
+    if (hasMore) {
+      const showMoreBtn = el(
+        'button',
+        'mt-6 w-full sm:w-auto mx-auto block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105',
+        'Mostrar mais anúncios'
+      );
+      showMoreBtn.addEventListener('click', () => {
+        currentPage++;
+        renderCurrentPage();
+        resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      resultsContainer.appendChild(showMoreBtn);
+    }
+  };
 
   const submitBtn = form.querySelector('button[type="submit"]');
   if (submitBtn) {
@@ -372,6 +410,11 @@ export function initAdoptCat() {
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // Reseta o estado a cada nova busca
+    currentPage = 0;
+    allAds = [];
+    backendResponse = {};
 
     const payload = {
       age: $('#cat-age', form)?.value || '',
@@ -383,8 +426,9 @@ export function initAdoptCat() {
       '<div class="text-sm text-zinc-600 dark:text-zinc-300">🔍 Buscando anúncios...</div>';
 
     try {
-      const data = await postJSON(NETLIFY_FN, payload);
-      renderAdoptionResults(resultsContainer, data);
+      backendResponse = await postJSON(NETLIFY_FN, payload);
+      allAds = backendResponse.anuncios || [];
+      renderCurrentPage(); // Renderiza a primeira página
     } catch (err) {
       console.error('Erro ao buscar anúncios:', err);
       renderAdoptionResults(resultsContainer, { anuncios: [] });
