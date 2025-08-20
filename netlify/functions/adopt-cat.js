@@ -1,22 +1,19 @@
 // netlify/functions/adopt-cat.js
-// Versão refatorada com IA (Gemini) para scoring, melhor estrutura e resiliência.
+// Buscar anúncios de adoção + scoring com IA (Gemini REST) + fallbacks sólidos.
 
 const SOURCE_SITES = [
   'olx.com.br', 'adoteumgatinho.org.br', 'catland.org.br', 'adotepetz.com.br',
   'adotebicho.com.br', 'paraisodosfocinhos.com.br', 'adoteumpet.com.br'
 ];
+
 const BAD_WORDS = [
-  // 'custo' e 'taxa' foram removidos. A IA é mais capaz de julgar o contexto.
+  // 'custo' e 'taxa' removidos — ONG séria pode mencionar “taxa de adoção”.
   'venda', 'vende-se', 'valor', 'preço', 'r$'
 ];
 
+// === Utils ===
 const isValidUrl = (u) => {
-  try {
-    new URL(u);
-    return true;
-  } catch {
-    return false;
-  }
+  try { new URL(u); return true; } catch { return false; }
 };
 
 const jsonResponse = (status, data) => ({
@@ -25,59 +22,116 @@ const jsonResponse = (status, data) => ({
   body: JSON.stringify(data),
 });
 
-// Helper para pontuar um anúncio usando a IA do Gemini
-async function getAIScore(anuncio, apiKey) {
-  const { titulo, descricao, fonte } = anuncio;
-  if (!apiKey) return { score: 5, reason: "Chave da IA não configurada." };
+const DEBUG = String(process.env.DEBUG || '').toLowerCase() === 'true';
 
-  const prompt = `
-    Você é um assistente de IA especialista em avaliar a qualidade de anúncios de adoção de gatos no Brasil.
-    Analise o título, descrição e fonte.
-    Retorne APENAS um objeto JSON com o formato: {"score": <1-10>, "reason": "Justificativa curta", "is_adopted": <true/false>}.
+// === IA (Gemini REST) ===
+// Retry simples + timeout para evitar travas silenciosas
+async function withTimeout(promise, ms) {
+  const t = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms));
+  return Promise.race([promise, t]);
+}
 
-    CRITÉRIOS DE PONTUAÇÃO (3 NÍVEIS):
-    - **Excelente (8-10):** Anúncio de ONG reconhecida (adoteumgatinho.org.br, catland.org.br). É detalhado, com informações sobre castração, vacinas, temperamento.
-      - **IMPORTANTE:** Se o anúncio mencionar "ADOTADO", "ADOTADA", etc., isso é um SINAL POSITIVO. Mantenha o score alto (9 ou 10) e defina "is_adopted": true. O objetivo é levar o usuário a conhecer a ONG.
-      - Se mencionar "taxa de adoção", também é um sinal positivo de uma ONG séria.
-    - **Bom (4-7):** Anúncio claro de outras fontes, com informações essenciais. Inspira confiança, mas não é de uma ONG de topo.
-    - **Baixo (1-3):** Anúncio vago, suspeito, com pouca informação ou que pareça comercial (venda explícita).
+async function geminiRESTCall(prompt, apiKey) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const body = {
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig: {
+      temperature: 0.2,
+      maxOutputTokens: 256,
+    },
+  };
 
-    INFORMAÇÕES DO ANÚNCIO:
-    - Título: "${titulo}"
-    - Descrição: "${descricao}"
-    - Fonte: "${fonte}"
-  `;
+  const res = await withTimeout(fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  }), 8000);
+
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`Gemini HTTP ${res.status}: ${txt.slice(0, 400)}`);
+  }
+
+  const data = await res.json();
+  // caminho padrão do texto
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return typeof text === 'string' ? text : '';
+}
+
+function extractJsonObject(textRaw) {
+  const cleaned = (textRaw || '')
+    .replace(/```json/gi, '')
+    .replace(/```/g, '')
+    .trim();
+
+  const match = cleaned.match(/\{[\s\S]*\}/);
+  if (!match) return null;
 
   try {
-    const { GoogleGenerativeAI } = await import("@google/generative-ai");
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    return JSON.parse(match[0]);
+  } catch {
+    return null;
+  }
+}
 
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        // Garante que a propriedade is_adopted sempre exista como booleano
-        parsed.is_adopted = !!parsed.is_adopted;
-        return parsed;
+// Helper para pontuar um anúncio usando a IA do Gemini (REST)
+async function getAIScore(anuncio, apiKey) {
+  const { titulo, descricao, fonte } = anuncio;
+
+  if (!apiKey) {
+    if (DEBUG) console.error('[AI] GEMINI_API_KEY ausente — usando simple score.');
+    return null; // deixa o fallback atuar
+  }
+
+  const prompt = `
+Responda **apenas** com um JSON válido (sem markdown), no formato:
+{"score": <1-10>, "reason": "<curta>", "is_adopted": <true|false>}
+
+Regras de avaliação:
+- 8-10: ONG reconhecida (adoteumgatinho.org.br, catland.org.br), anúncio detalhado (castração, vacinas, temperamento). Se constar "adotado"/"adotada": manter 9-10 e is_adopted=true. "taxa de adoção" é positivo.
+- 4-7: bom/ok, confiável.
+- 1-3: vago/suspeito/comercial (venda explícita).
+
+Dados:
+Titulo: ${JSON.stringify(titulo || "")}
+Descricao: ${JSON.stringify(descricao || "")}
+Fonte: ${JSON.stringify(fonte || "")}
+`.trim();
+
+  try {
+    const text = await geminiRESTCall(prompt, apiKey);
+    if (DEBUG) console.error('[AI] raw:', String(text).slice(0, 400));
+
+    const parsed = extractJsonObject(text);
+    if (!parsed) {
+      if (DEBUG) console.error('[AI] JSON não encontrado/parseável.');
+      return null;
     }
 
-    return { score: 4, reason: "Não foi possível analisar com a IA.", is_adopted: false };
+    const scoreNum = Number(parsed.score);
+    const normalizedScore = Number.isFinite(scoreNum)
+      ? Math.max(1, Math.min(10, scoreNum))
+      : null;
+
+    return {
+      score: normalizedScore, // 1..10
+      reason: typeof parsed.reason === 'string' ? parsed.reason.slice(0, 140) : 'Analisado.',
+      is_adopted: !!parsed.is_adopted,
+    };
   } catch (error) {
-    console.error("Erro na chamada da IA:", error);
-    return { score: 4, reason: "Falha ao contatar a IA.", is_adopted: false };
+    if (DEBUG) console.error('[AI] Erro na chamada REST:', error);
+    return null; // deixa fallback atuar
   }
 }
 
 // Fallback para o método de scoring antigo se a IA falhar
 function getSimpleScore(anuncio, { color, localizacao }) {
   let s = 0;
-  const desc = anuncio.descricao.toLowerCase();
-  if (color && desc.includes(color.toLowerCase())) s += 0.35;
-  if (localizacao && desc.includes(localizacao.toLowerCase())) s += 0.35;
-  s += Math.min(anuncio.descricao.length / 220, 0.3);
-  return Math.round(s * 10); // Retorna de 0 a 10
+  const desc = (anuncio.descricao || '').toLowerCase();
+  if (color && desc.includes(String(color).toLowerCase())) s += 0.35;
+  if (localizacao && desc.includes(String(localizacao).toLowerCase())) s += 0.35;
+  s += Math.min((anuncio.descricao || '').length / 220, 0.3);
+  return Math.round(s * 10); // 0..10
 }
 
 // Helper para executar uma busca na SerpApi e normalizar os resultados
@@ -87,7 +141,7 @@ async function runQueryAndParse(query, apiKey) {
     engine: 'google',
     hl: 'pt-BR',
     gl: 'br',
-    num: '10', // Pede 10 por busca
+    num: '10',
     q: query,
     api_key: apiKey,
   }).forEach(([key, value]) => serpUrl.searchParams.set(key, value));
@@ -95,7 +149,7 @@ async function runQueryAndParse(query, apiKey) {
   try {
     const res = await fetch(serpUrl.toString());
     if (!res.ok) {
-      console.error(`SerpAPI query failed for "${query}": ${res.status}`);
+      if (DEBUG) console.error(`SerpAPI query failed "${query}": ${res.status}`);
       return [];
     }
     const data = await res.json();
@@ -115,7 +169,7 @@ async function runQueryAndParse(query, apiKey) {
         a.url && isValidUrl(a.url)
       );
   } catch (error) {
-    console.error(`Error fetching or parsing SerpAPI for query "${query}":`, error);
+    if (DEBUG) console.error(`Error fetching/parsing SerpAPI "${query}":`, error);
     return [];
   }
 }
@@ -136,7 +190,7 @@ export const handler = async (event) => {
     const body = JSON.parse(event.body || '{}');
     const { age = '', color = '', localizacao = '' } = body;
 
-    // --- Estratégia de busca em múltiplos estágios ---
+    // Estratégia de busca (específica -> ampla)
     const siteFilter = SOURCE_SITES.map(s => `site:${s}`).join(' OR ');
 
     const specificTerms = ['adoção de gatos'];
@@ -147,56 +201,49 @@ export const handler = async (event) => {
     const broadTerms = ['adoção de gatos'];
     if (localizacao) broadTerms.push(localizacao);
 
-    // Lista de queries, da mais específica para a mais ampla
     const queries = [
       `${specificTerms.join(' ')} -filhotes (${siteFilter})`,
       `${broadTerms.join(' ')} -filhotes (${siteFilter})`,
     ];
-
-    // Se a localização for um estado ou cidade grande, faz uma busca mais ampla sem o filtro de sites
-    if (localizacao.length > 3) {
+    if (localizacao && localizacao.length > 3) {
       queries.push(`${broadTerms.join(' ')} -filhotes`);
     }
 
-    const allResults = new Map(); // Usamos Map para desduplicar por URL
+    const allResults = new Map();
 
     for (const query of queries) {
-      // Se já temos resultados suficientes, podemos parar de buscar.
       if (allResults.size >= 15) break;
-
       const newAds = await runQueryAndParse(query, SERPAPI_KEY);
-      newAds.forEach(ad => {
-        if (ad.url && !allResults.has(ad.url)) {
-          allResults.set(ad.url, ad);
-        }
-      });
+      newAds.forEach(ad => { if (ad.url && !allResults.has(ad.url)) allResults.set(ad.url, ad); });
     }
 
     let anuncios = Array.from(allResults.values());
 
     if (anuncios.length > 0) {
-      // Pontua todos os anúncios em paralelo usando IA
+      // IA em paralelo (REST), com fallback para simple score
       const scoringPromises = anuncios.map(anuncio =>
         getAIScore(anuncio, GEMINI_KEY).catch(e => {
-          console.error("Promise de score rejeitada:", e);
-          return null; // Garante que Promise.all não falhe
+          if (DEBUG) console.error("Promise de score rejeitada:", e);
+          return null;
         })
       );
       const scores = await Promise.all(scoringPromises);
 
       anuncios.forEach((anuncio, index) => {
         const aiResult = scores[index];
-        if (aiResult && aiResult.score) {
-          anuncio.score = aiResult.score / 10; // Normaliza para 0-1 para o frontend
-          anuncio.is_adopted = aiResult.is_adopted || false; // Adiciona o status de adoção
+
+        if (aiResult && typeof aiResult.score === 'number' && Number.isFinite(aiResult.score)) {
+          anuncio.score = aiResult.score / 10; // 0..1 p/ frontend
+          anuncio.is_adopted = !!aiResult.is_adopted;
+          anuncio._ai_failed = false;
         } else {
-          // Usa o scoring antigo como fallback
-          anuncio.score = getSimpleScore(anuncio, body) / 10;
-          anuncio.is_adopted = false; // Padrão para o fallback
+          const simple = getSimpleScore(anuncio, body); // 0..10
+          anuncio.score = simple / 10;
+          anuncio.is_adopted = false;
+          anuncio._ai_failed = true; // útil p/ depurar no front (mostrar "—" no badge, por ex.)
         }
       });
 
-      // Ordena pelo score
       anuncios.sort((a, b) => (b.score || 0) - (a.score || 0));
     }
 
@@ -232,10 +279,15 @@ export const handler = async (event) => {
       quantidade: anuncios.length,
       anuncios,
       mensagem: 'Veja os anúncios de adoção que encontramos e analisamos para você.',
-      meta: { engine: 'serpapi-google', terms: specificTerms, sites: SOURCE_SITES },
+      meta: {
+        engine: 'serpapi-google',
+        terms: specificTerms,
+        sites: SOURCE_SITES,
+        ai: GEMINI_KEY ? 'gemini-1.5-flash (REST)' : 'simple-score-fallback',
+      },
     });
   } catch (err) {
-    console.error("Erro inesperado no handler:", err);
+    if (DEBUG) console.error("Erro inesperado no handler:", err);
     return jsonResponse(500, { error: `Erro interno no servidor: ${err.message}` });
   }
 };
