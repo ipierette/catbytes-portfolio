@@ -123,10 +123,15 @@ export function renderAdoptionResults(container, data) {
   ].join(' ')
 );
 
-    const top = el('div', 'flex items-start gap-3');
+    // Layout responsivo: coluna no mobile, linha em telas maiores.
+    // O texto também se alinha de acordo com o tamanho da tela.
+    const top = el(
+      'div',
+      'flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:gap-3 sm:text-left'
+    );
 
     // Coluna esquerda: label + badge
-    const badgeWrap = el('div', 'w-[72px] shrink-0 text-center');
+    const badgeWrap = el('div', 'w-auto sm:w-[72px] shrink-0');
     badgeWrap.appendChild(
       el('div', 'text-[11px] font-medium text-zinc-500 dark:text-slate-300 mb-1', 'Score da IA')
     );
@@ -287,7 +292,8 @@ badgeWrap.appendChild(tipWrap);
 // === /Tooltip click-only ===
 
     // Conteúdo (título, fonte, descrição)
-    const content = el('div', 'flex-1 min-w-0');
+    // Ocupa toda a largura no mobile e se torna flexível em telas maiores.
+    const content = el('div', 'w-full sm:w-auto flex-1 min-w-0');
 
     const titleText = anuncio.titulo || 'Anúncio de Adoção';
     const titleEl = href
