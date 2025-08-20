@@ -35,11 +35,12 @@ async function getAIScore(anuncio, apiKey) {
     Analise o título, descrição e fonte.
     Retorne APENAS um objeto JSON com o formato: {"score": <1-10>, "reason": "Justificativa curta", "is_adopted": <true/false>}.
 
-    CRITÉRIOS DE PONTUAÇÃO (3 NÍVEIS):
-    - **Excelente (8-10):** Anúncio de ONG reconhecida (adoteumgatinho.org.br, catland.org.br). É detalhado, com informações sobre castração, vacinas, temperamento.
-      - **IMPORTANTE:** Se o anúncio mencionar "ADOTADO", "ADOTADA", etc., isso é um SINAL POSITIVO. Mantenha o score alto (9 ou 10) e defina "is_adopted": true. O objetivo é levar o usuário a conhecer a ONG.
-      - Se mencionar "taxa de adoção", também é um sinal positivo de uma ONG séria.
-    - **Bom (5-7):** Anúncio claro de outras fontes, com informações essenciais. Inspira confiança, mas não é de uma ONG de topo.
+    **REGRA DE OURO:** Anúncios das fontes 'adoteumgatinho.org.br' ou 'catland.org.br' são SEMPRE de alta qualidade.
+    - Se o texto de uma dessas fontes mencionar "ADOTADO" ou "ADOTADA", isso é um SINAL DE SUCESSO da ONG. Atribua score 10, defina "is_adopted": true, e na "reason" explique que é um ótimo exemplo de anúncio de uma ONG confiável. NÃO penalize o score por isso.
+
+    CRITÉRIOS GERAIS:
+    - **Excelente (8-10):** Anúncio de ONG reconhecida (conforme a REGRA DE OURO) ou anúncio muito detalhado de outra fonte, com informações sobre castração, vacinas, temperamento. Se mencionar "taxa de adoção", é um sinal positivo.
+    - **Bom (5-7):** Anúncio claro de outras fontes, com informações essenciais que inspiram confiança.
     - **Baixo (1-4):** Anúncio vago, suspeito, com pouca informação ou que pareça comercial (venda explícita).
 
     INFORMAÇÕES DO ANÚNCIO:
@@ -193,6 +194,16 @@ export const handler = async (event) => {
           // Usa o scoring antigo como fallback
           anuncio.score = getSimpleScore(anuncio, body) / 10;
           anuncio.is_adopted = false; // Padrão para o fallback
+        }
+
+        // --- LÓGICA DE OVERRIDE PARA ONGs CONFIÁVEIS ---
+        // Garante que anúncios de ONGs de topo, mesmo que "adotados", recebam score máximo.
+        const isTopTierNgo = ['adoteumgatinho.org.br', 'catland.org.br'].includes(anuncio.fonte);
+        const mentionsAdopted = /adotad[oa]/i.test(anuncio.titulo + ' ' + anuncio.descricao);
+
+        if (isTopTierNgo && mentionsAdopted) {
+          anuncio.score = 1.0; // Score máximo (10/10)
+          anuncio.is_adopted = true;
         }
       });
 
