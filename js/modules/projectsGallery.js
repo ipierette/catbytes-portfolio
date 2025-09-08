@@ -3,11 +3,11 @@ import { registerLazy } from './lazyLoad.js';
 
 const projects = [
     {
-        title: "Projeto Mario Memmory",
-        description: "Um jogo da memória interativo desenvolvido inicialmente em aula e posteriormente aprimorado de forma independente. Implementado com HTML5, CSS3 e JavaScript puro, inclui recursos como responsividade completa, áudio dinâmico, centralização de elementos para diferentes resoluções e layout otimizado para melhor experiência do usuário.",
-        image: "./images/projeto-memoria.webp",
-        liveUrl: "https://ipierette.github.io/mario-memory/",
-        githubUrl: "https://github.com/ipierette/mario-memory"
+        title: "Projeto MeowFlix IA",
+        description: "Sistema de recomendação de filmes com IA que analisa o humor do usuário através de linguagem natural (Google Gemini) e sugere filmes personalizados usando dados reais do TMDB. Desenvolvido com React/TypeScript, originalmente n8n porém com workfow convertido para deploy serverless no Netlify, interface acessível e responsiva com tema de gatos e netflix-inspired.",
+        image: "./images/meowflixia.png",
+        liveUrl: "https://meowflixia.netlify.app/",
+        githubUrl: "https://github.com/ipierette/meowflix-ai-mood-matcher"
     },
     {
         title: "Agência XYZ",
