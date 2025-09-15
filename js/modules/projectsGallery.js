@@ -12,7 +12,7 @@ const projects = [
     {
         title: "CATButler-Assistente de IA para Casa (SPA)",
         description: "SPA responsiva estilo Dashboard o CATButler é uma aplicação web inovadora que transforma a rotina doméstica com IA, ajudando a organizar tarefas, planejar refeições e fazer compras inteligentes de forma sustentável. Une interface moderna, gamificação e recomendações personalizadas. Desenvolvido em React/Vite, com backend em Node.js/Express em desenvolvimento.",
-        image: "./images/catutler.png",
+        image: "./images/catbutler.png",
         liveUrl: "https://catbutler-frontend.vercel.app/",
         githubUrl: "https://github.com/ipierette/catbutler-frontend"
     },
