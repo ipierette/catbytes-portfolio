@@ -10,11 +10,11 @@ const projects = [
         githubUrl: "https://github.com/ipierette/meowflix-ai-mood-matcher"
     },
     {
-        title: "Agência XYZ",
-        description: "Landing page responsiva para uma agência fictícia de desenvolvimento web, criada com HTML5 semântico e CSS3 moderno. Possui design minimalista, seções bem estruturadas e tipografia legível, utilizando boas práticas de SEO e acessibilidade. O layout é totalmente adaptável a diferentes tamanhos de tela e foi otimizado para rápido carregamento, com foco em UI limpa e profissional.",
-        image: "./images/projeto-agenciaxyz.webp",
-        liveUrl: "https://ipierette.github.io/landing-page-xyz/",
-        githubUrl: "https://github.com/ipierette/landing-page-xyz"
+        title: "CATButler-Assistente de IA para Casa (SPA)",
+        description: "SPA responsiva estilo Dashboard o CATButler é uma aplicação web inovadora que transforma a rotina doméstica com IA, ajudando a organizar tarefas, planejar refeições e fazer compras inteligentes de forma sustentável. Une interface moderna, gamificação e recomendações personalizadas. Desenvolvido em React/Vite, com backend em Node.js/Express em desenvolvimento.",
+        image: "./images/catutler.png",
+        liveUrl: "https://catbutler-frontend.vercel.app/",
+        githubUrl: "https://github.com/ipierette/catbutler-frontend"
     },
     {
         title: "Chat-Bot Via Lactea",
