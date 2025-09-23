@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block common junk folders if they ever exist (safety, not required)
+Disallow: /wp-admin/
+Disallow: /cgi-bin/
+
+Sitemap: https://catbytes.netlify.app/sitemap.xml

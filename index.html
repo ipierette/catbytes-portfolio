@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Título e Descrição -->
-  <title>CatBytes — Portfólio Criativo de Front-end, Automação e IA</title>
+  <title>Izadora Cury Pierette | CatBytes — Portfólio Criativo</title>
   <meta name="description"
     content="Conheça projetos que unem design moderno, código limpo e soluções com inteligência artificial e automação. Explore, inspire-se e veja o futuro em bytes.">
   <link rel="canonical" href="https://catbytes.netlify.app/">
@@ -45,10 +45,58 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+  <!-- Schema JSON SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "knowsAbout": [
+        "HTML", "CSS", "JavaScript", "React.js", "Automação com IA", "Node.js", "PostgreSQL", "Desenvolvimento Fullstack", "Clean Code", "Design Responsivo"
+      ],
+      "@id": "https://catbytes.netlify.app/#izadora",
+      "name": "Izadora Cury Pierette",
+      "alternateName": "Izadora Pierette",
+      "jobTitle": "Desenvolvedora Front-End",
+      "image": "https://catbytes.netlify.app/images/izadora.webp",
+      "url": "https://catbytes.netlify.app/",
+      "sameAs": [
+        "https://www.linkedin.com/in/izadora-cury-pierette-7a7754253/",
+        "https://github.com/ipierette"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://catbytes.netlify.app/#website",
+      "name": "CatBytes",
+      "url": "https://catbytes.netlify.app/",
+      "publisher": { "@id": "https://catbytes.netlify.app/#izadora" },
+      "inLanguage": "pt-BR",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.google.com/search?q=site:catbytes.netlify.app+{search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": ["CollectionPage", "Portfolio"]
+      "@id": "https://catbytes.netlify.app/#portfolio",
+      "name": "Portfólio CatBytes",
+      "isPartOf": { "@id": "https://catbytes.netlify.app/#website" },
+      "about": { "@id": "https://catbytes.netlify.app/#izadora" },
+      "url": "https://catbytes.netlify.app/",
+      "inLanguage": "pt-BR",
+      "description": "Portfólio de Izadora Pierette — fullstack, automação e IA (CatBytes)."
+    }
+  ]
+}
+</script>
+
+
   <!-- TailwindCSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Faz o Tailwind ativar "dark:*" quando um ancestral tiver a classe .dark-mode
     tailwind.config = {
       darkMode: ['class', '.dark-mode'],
       theme: { extend: {} }
@@ -64,7 +112,7 @@
   <header class="bg-gray-900 text-white p-4 shadow-lg sticky top-0 z-50">
     <nav class="container mx-auto flex justify-between items-center" aria-label="Navegação Principal">
       <a href="#" class="logo" aria-label="CatBytes - Voltar ao Início">
-        <img src="./images/logo300x100-fundo-escuro.svg" alt="ICP logo" class="h-17 inline-block"
+        <img src="./images/logo300x100-fundo-escuro.svg" alt="Logo CatBytes desenvolvido por Izadora Pierette" class="h-17 inline-block"
           style="height: 73.7px">
       </a>
       <ul class="hidden md:flex space-x-6 items-center">
@@ -268,7 +316,7 @@
 
           <div class="project-image-container md:w-1/2 mb-6 md:mb-0 md:mr-6">
             <img id="project-image" src="https://placehold.co/600x400/36454F/FFFFFF?text=Projeto"
-              alt="Imagem do Projeto Destacado" class="rounded-lg shadow-md w-full h-auto object-cover">
+              alt="Projeto front-end em React — CatBytes Portfolio" class="rounded-lg shadow-md w-full h-auto object-cover">
           </div>
 
           <div class="project-details md:w-1/2 text-left">
