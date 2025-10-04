@@ -1,4 +1,4 @@
-const MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+const MODEL = "gemini-1.5-flash"; // fixo, sem env var
 const API_KEY = process.env.GEMINI_API_KEY;
 
 function makePrompt(description) {

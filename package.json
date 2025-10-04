@@ -15,7 +15,7 @@
     "minimist": "^1.2.8"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
+    "@google/generative-ai": "0.24.1",
     "dotenv": "^17.2.1"
   }
 }
