@@ -1,4 +1,4 @@
-export const handler = async (event) => {
+exports.handler = async (event) => {
   try {
     if (event.httpMethod === "OPTIONS") {
       return {
