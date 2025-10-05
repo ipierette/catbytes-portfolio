@@ -44,61 +44,55 @@ export const handler = async (event) => {
     const binaryContent = filePart.slice(headerEnd + 4).replace(/\r\n--$/, "");
     const base64Data = Buffer.from(binaryContent, "binary").toString("base64");
 
-    const body = {
-      contents: [
-        {
-          role: "user",
-          parts: [
-            { inlineData: { mimeType: mime, data: base64Data } },
-            {
-              text:
-                'Responda em pt-BR. Analise esta foto de gato e retorne SOMENTE JSON (sem Markdown) ' +
-                'exatamente neste formato: ' +
-                '{"idade":"~X meses/anos (intervalo)","racas":["..."],"personalidade":["..."],"observacoes":"..."} ' +
-                'Seja breve e conservador nas estimativas. Se não for um gato, diga {"observacoes":"imagem sem gato."}.',
-            },
-          ],
-        },
-      ],
-    };
+    const prompt = 'Responda em pt-BR. Analise esta foto de gato e retorne SOMENTE JSON (sem Markdown) ' +
+      'exatamente neste formato: ' +
+      '{"idade":"~X meses/anos (intervalo)","racas":["..."],"personalidade":["..."],"observacoes":"..."} ' +
+      'Seja breve e conservador nas estimativas. Se não for um gato, diga {"observacoes":"imagem sem gato."}';
 
-    const resp = await fetch(
-      "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY,
+    const { GoogleGenerativeAI } = await import("@google/generative-ai");
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const aiResult = await model.generateContent([
+      prompt,
       {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        inlineData: {
+          data: base64Data,
+          mimeType: mime
+        }
       }
-    );
+    ]);
 
-    const data = await resp.json();
+    const text = aiResult.response.text();
 
-    if (!resp.ok) {
-      return json(resp.status, { error: "gemini_request_failed", detail: data });
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      const regex = /\{[\s\S]*\}/;
+      const match = regex.exec(text);
+      parsed = match ? JSON.parse(match[0]) : { observacoes: text || "sem dados" };
     }
 
-    const text =
-      data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ||
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "";
-
-    let result;
-    try {
-      result = JSON.parse(text);
-    } catch {
-      const m = text.match(/\{[\s\S]*\}/);
-      result = m ? JSON.parse(m[0]) : { observacoes: text || "sem dados" };
+    let racas = [];
+    if (Array.isArray(parsed.racas)) {
+      racas = parsed.racas;
+    } else if (Array.isArray(parsed.breeds)) {
+      racas = parsed.breeds;
+    }
+    
+    let personalidade = [];
+    if (Array.isArray(parsed.personalidade)) {
+      personalidade = parsed.personalidade;
+    } else if (Array.isArray(parsed.personality)) {
+      personalidade = parsed.personality;
     }
 
     const normalized = {
-      idade: result.idade || result.age || "--",
-      racas: Array.isArray(result.racas) ? result.racas : Array.isArray(result.breeds) ? result.breeds : [],
-      personalidade: Array.isArray(result.personalidade)
-        ? result.personalidade
-        : Array.isArray(result.personality)
-        ? result.personality
-        : [],
-      observacoes: result.observacoes || result.notes || "",
+      idade: parsed.idade || parsed.age || "--",
+      racas,
+      personalidade,
+      observacoes: parsed.observacoes || parsed.notes || "",
     };
 
     return json(200, normalized, { "Access-Control-Allow-Origin": "*" });

@@ -1,9 +1,8 @@
-const MODEL = "gemini-1.5-flash"; // fixo, sem env var
+const MODEL = "gemini-1.5-flash";
 const API_KEY = process.env.GEMINI_API_KEY;
 
 function makePrompt(description) {
-  return `
-Você é um redator de social media para adoção de gatos no Brasil.
+  return `Você é um redator de social media para adoção de gatos no Brasil.
 Com base na descrição abaixo, gere um PACOTE EM JSON PURO (sem markdown, sem comentários).
 
 DESCRIÇÃO
@@ -31,8 +30,7 @@ FORMATO JSON EXATO
   }
 }
 Se faltar algum dado, assuma de forma realista e deixe claro no texto.
-Retorne SOMENTE o JSON.
-`;
+Retorne SOMENTE o JSON.`;
 }
 
 function tryParseJSON(str) {
