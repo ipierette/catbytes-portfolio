@@ -104,7 +104,7 @@ export const handler = async (event) => {
       return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    const SERPAPI_KEY = process.env.SERPAPI_API_KEY;
+    const SERPAPI_KEY = process.env.SERPAPI_KEY;
     const GEMINI_KEY = process.env.GEMINI_API_KEY;
     
     if (!SERPAPI_KEY) {
