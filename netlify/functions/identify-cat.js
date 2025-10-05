@@ -44,26 +44,37 @@ export const handler = async (event) => {
     const binaryContent = filePart.slice(headerEnd + 4).replace(/\r\n--$/, "");
     const base64Data = Buffer.from(binaryContent, "binary").toString("base64");
 
-    const prompt = 'Responda em pt-BR. Analise esta foto de gato e retorne SOMENTE JSON (sem Markdown) ' +
-      'exatamente neste formato: ' +
-      '{"idade":"~X meses/anos (intervalo)","racas":["..."],"personalidade":["..."],"observacoes":"..."} ' +
-      'Seja breve e conservador nas estimativas. Se não for um gato, diga {"observacoes":"imagem sem gato."}';
+    const body = {
+      contents: [{
+        role: "user",
+        parts: [
+          { inlineData: { mimeType: mime, data: base64Data } },
+          {
+            text: 'Responda em pt-BR. Analise esta foto de gato e retorne SOMENTE JSON (sem Markdown) ' +
+                  'exatamente neste formato: ' +
+                  '{"idade":"~X meses/anos (intervalo)","racas":["..."],"personalidade":["..."],"observacoes":"..."} ' +
+                  'Seja breve e conservador nas estimativas. Se não for um gato, diga {"observacoes":"imagem sem gato."}'
+          }
+        ]
+      }]
+    };
 
-    const { GoogleGenerativeAI } = await import("@google/generative-ai");
-    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    const aiResult = await model.generateContent([
-      prompt,
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
-        inlineData: {
-          data: base64Data,
-          mimeType: mime
-        }
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
       }
-    ]);
+    );
 
-    const text = aiResult.response.text();
+    const data = await resp.json();
+    
+    if (!resp.ok) {
+      return json(resp.status, { error: "gemini_request_failed", detail: data });
+    }
+
+    const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join("") || "";
 
     let parsed;
     try {

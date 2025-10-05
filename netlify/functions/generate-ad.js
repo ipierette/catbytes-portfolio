@@ -56,18 +56,36 @@ export async function handler(event) {
       return { statusCode: 400, body: JSON.stringify({ error: "description é obrigatório" }) };
     }
 
-    const { GoogleGenerativeAI } = await import("@google/generative-ai");
-    const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ model: MODEL });
+    const body = {
+      contents: [{
+        role: "user",
+        parts: [{ text: makePrompt(description) }]
+      }]
+    };
 
-    const result = await model.generateContent(makePrompt(description));
-    const text = result.response.text();
-    const data = tryParseJSON(text) ?? { raw: text };
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      }
+    );
+
+    const data = await resp.json();
+    
+    if (!resp.ok) {
+      console.error("[generate-ad] Gemini API error:", data);
+      return { statusCode: 500, body: JSON.stringify({ error: "Falha na API do Gemini" }) };
+    }
+
+    const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join("") || "";
+    const parsedData = tryParseJSON(text) ?? { raw: text };
 
     return {
       statusCode: 200,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ok: true, data })
+      body: JSON.stringify({ ok: true, data: parsedData })
     };
   } catch (err) {
     console.error("[generate-ad] error:", err);
