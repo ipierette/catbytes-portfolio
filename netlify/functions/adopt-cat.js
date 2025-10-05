@@ -113,21 +113,30 @@ export const handler = async (event) => {
 
     const { age = '', color = '', localizacao = '' } = JSON.parse(event.body || '{}');
 
-    // Monta a query (apenas termos úteis + restrição aos sites definidos)
-    const terms = ['adoção de gatos'];
-    if (color) terms.push(`gato ${color}`);
-    if (age) terms.push(String(age));
-    if (localizacao) terms.push(localizacao);
-
+    // Monta queries com prioridade para localização
+    const baseTerms = ['adoção de gatos'];
+    if (color) baseTerms.push(`gato ${color}`);
+    if (age) baseTerms.push(String(age));
+    
     const siteFilter = SOURCE_SITES.map(s => `site:${s}`).join(' OR ');
-    const query = `${terms.join(' ')} ${siteFilter}`;
+    
+    // Query principal com localização prioritária
+    let query;
+    if (localizacao) {
+      // Prioriza localização específica na busca
+      query = `${baseTerms.join(' ')} "${localizacao}" (${siteFilter})`;
+    } else {
+      query = `${baseTerms.join(' ')} (${siteFilter})`;
+    }
 
-    // Chamada SerpAPI (Google)
+    console.log('Query de busca:', query);
+
+    // Chamada SerpAPI (Google) - reduzido para 8 resultados para ser mais rápido
     const serpUrl = new URL('https://serpapi.com/search');
     serpUrl.searchParams.set('engine', 'google');
     serpUrl.searchParams.set('hl', 'pt-BR');
     serpUrl.searchParams.set('gl', 'br');
-    serpUrl.searchParams.set('num', '12');
+    serpUrl.searchParams.set('num', '8'); // Reduzido de 12 para 8
     serpUrl.searchParams.set('q', query);
     serpUrl.searchParams.set('api_key', SERPAPI_KEY);
 
@@ -149,17 +158,31 @@ export const handler = async (event) => {
     }))
     .filter(a =>
       a.descricao &&
-      a.descricao.length >= 30 &&
+      a.descricao.length >= 20 && // Reduzido de 30 para 20
       !BAD_WORDS.some(w => a.descricao.toLowerCase().includes(w)) &&
       a.url && isValidUrl(a.url)
     );
+    
+    // Pré-filtro por localização se especificada
+    if (localizacao && anuncios.length > 0) {
+      const locMatch = anuncios.filter(a => 
+        a.descricao.toLowerCase().includes(localizacao.toLowerCase()) ||
+        a.titulo.toLowerCase().includes(localizacao.toLowerCase())
+      );
+      if (locMatch.length > 0) {
+        anuncios = locMatch; // Usa só os que batem com localização
+        console.log(`Filtrados ${locMatch.length} anúncios para ${localizacao}`);
+      }
+    }
 
-    // Usar IA para scoring inteligente se disponível
+    // Usar IA para scoring inteligente - limitado a 6 anúncios para performance
     if (GEMINI_KEY && anuncios.length > 0) {
-      console.log("Usando IA para análise de", anuncios.length, "anúncios");
+      // Limita a 6 anúncios para análise IA (mais rápido)
+      const adsForAI = anuncios.slice(0, 6);
+      console.log(`Usando IA para análise de ${adsForAI.length} anúncios (de ${anuncios.length} encontrados)`);
       
       const searchParams = { color, localizacao };
-      const scoringPromises = anuncios.map(anuncio =>
+      const scoringPromises = adsForAI.map(anuncio =>
         getAIScore(anuncio, GEMINI_KEY, searchParams).catch(err => {
           console.error("Erro no scoring do anúncio:", err);
           return { score: 4, reason: "Erro na análise", is_adopted: false };
@@ -168,26 +191,40 @@ export const handler = async (event) => {
       
       const scores = await Promise.all(scoringPromises);
       
-      anuncios.forEach((anuncio, index) => {
+      adsForAI.forEach((anuncio, index) => {
         const aiResult = scores[index];
         anuncio.score = aiResult.score / 10; // Normaliza para 0-1
         anuncio.is_adopted = aiResult.is_adopted;
         anuncio.ai_reason = aiResult.reason;
       });
+      
+      // Para anúncios restantes, usa scoring simples
+      if (anuncios.length > 6) {
+        const remainingAds = anuncios.slice(6);
+        remainingAds.forEach(a => {
+          a.score = getSimpleScore(a);
+          a.is_adopted = false;
+        });
+      }
     } else {
       // Fallback: scoring simples
       console.log("Usando scoring simples (sem IA)");
-      const prefer = (a) => {
-        let s = 0;
-        if (color && a.descricao.toLowerCase().includes(color.toLowerCase())) s += 0.35;
-        if (localizacao && a.descricao.toLowerCase().includes(localizacao.toLowerCase())) s += 0.35;
-        s += Math.min(a.descricao.length / 220, 0.3);
-        return s;
-      };
       anuncios.forEach(a => {
-        a.score = prefer(a);
+        a.score = getSimpleScore(a);
         a.is_adopted = false;
       });
+    }
+    
+    function getSimpleScore(a) {
+      let s = 0;
+      // Bônus grande para localização correta
+      if (localizacao && (a.descricao.toLowerCase().includes(localizacao.toLowerCase()) || 
+                         a.titulo.toLowerCase().includes(localizacao.toLowerCase()))) {
+        s += 0.5; // Aumentado de 0.35 para 0.5
+      }
+      if (color && a.descricao.toLowerCase().includes(color.toLowerCase())) s += 0.25;
+      s += Math.min(a.descricao.length / 200, 0.25);
+      return s;
     }
     
     anuncios.sort((a, b) => (b.score || 0) - (a.score || 0));
