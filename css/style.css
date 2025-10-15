@@ -21,6 +21,129 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+
+/* WhatsApp Floating Button - scoped to #whatsapp-container to avoid global leakage */
+#whatsapp-container {
+    position: fixed;
+    /* anchor to the absolute bottom-left corner, respecting device safe area (iPhone notch/home indicator) */
+    left: max(0.75rem, env(safe-area-inset-left));
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    z-index: 1102; /* above most UI elements but below modal layers */
+    display: flex;
+    align-items: center;
+}
+
+#whatsapp-container .whatsapp-fab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background-color: #25D366;
+    color: #fff;
+    border-radius: 9999px;
+    box-shadow: 0 6px 18px rgba(37,211,102,0.24);
+    text-decoration: none;
+    font-size: 1.4rem;
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+#whatsapp-container .whatsapp-fab:focus,
+#whatsapp-container .whatsapp-fab:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 10px 24px rgba(37,211,102,0.28);
+    outline: none;
+}
+
+/* Tooltip is hidden by default; pointer-events disabled while hidden to avoid interfering */
+#whatsapp-container .whatsapp-tooltip {
+    pointer-events: none;
+    max-width: 360px;
+    background: linear-gradient(180deg, #0f172a, #111827);
+    color: #f8fafc;
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-left: 0.75rem;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    font-size: 0.95rem;
+    line-height: 1.35;
+    transform-origin: left bottom;
+    transform: translateY(6px) scale(0.96);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
+}
+
+/* When visible, enable pointer-events only for the tooltip (so it can be interacted with) */
+#whatsapp-container .whatsapp-tooltip[aria-hidden="false"] {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+#whatsapp-container .whatsapp-tooltip-text {
+    margin: 0;
+    color: #e6eef8;
+}
+
+/* Small screens: narrower tooltip and larger FAB touch target */
+@media (max-width: 640px) {
+    /* On small screens, slightly smaller FAB (approx -10%) but still anchored to corner via left/bottom above */
+    #whatsapp-container .whatsapp-fab { width: 58px; height: 58px; font-size: 1.5rem; }
+    #whatsapp-container .whatsapp-tooltip { max-width: calc(100vw - 96px); font-size: 0.95rem; }
+}
+
+/* Ensure tooltip doesn't cover interactive elements on very small screens: hide by default, reveal on tap */
+@media (max-width: 420px) {
+    #whatsapp-container .whatsapp-tooltip { display: block; }
+
+}
+
+/* Non-blocking popup for blocked WhatsApp fallback */
+#link-popup {
+    position: fixed;
+    left: 50%;
+    bottom: 1.5rem;
+    transform: translateX(-50%) translateY(120%);
+    z-index: 1200;
+    transition: transform 220ms ease, opacity 220ms ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#link-popup[aria-hidden="false"] {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.link-popup-card {
+    background: linear-gradient(180deg,#ffffff,#f7fafc);
+    color: #0f172a;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.12);
+    min-width: 260px;
+    max-width: 92vw;
+}
+
+.link-popup-message { margin: 0 0 0.5rem 0; font-size: 0.95rem; }
+.link-popup-actions { display: flex; gap: 0.5rem; align-items: center; }
+.btn-primary {
+    background:#22c55e;
+    color:#fff;
+    padding: .45rem .75rem;
+    border-radius: 8px;
+    text-decoration:none;
+}
+.link-popup-copy,
+.link-popup-close { background:transparent; border:1px solid #e5e7eb; padding:.4rem .65rem; border-radius:8px; }
+
+@media (min-width: 768px) {
+    #link-popup { bottom: 1.5rem; }
+}
+
 /* Customização da barra de rolagem */
 ::-webkit-scrollbar {
     width: 0.75rem;

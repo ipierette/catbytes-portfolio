@@ -377,7 +377,7 @@
             </p>
             <p class="text-lg leading-relaxed mb-4">
               Criar o Axel me ensinou muito sobre paciência e resiliência.
-              Lembro-me dos dias em que ele, filhote, mordia tudo e todos com
+              Lembro-me dos dias em que ele, filhote, arranhava tudo e todos com
               suas garrinhas afiadas – um verdadeiro teste para a minha calma!
               Mas, com tempo e dedicação, ele se tornou o companheiro mais
               carinhoso e brincalhão que eu poderia desejar.
@@ -673,6 +673,31 @@
     aria-label="Voltar ao início da página">
     <i class="fas fa-arrow-up text-xl" aria-hidden="true"></i>
   </button>
+
+
+  <div id="whatsapp-container" class="whatsapp-container" aria-hidden="false">
+    <!-- href replaced by JS handler to provide robust fallbacks (app, web, copy) -->
+    <button id="whatsapp-fab" class="whatsapp-fab" type="button" data-phone="5567984098786" data-text="Olá! Tenho interesse em seus serviços" aria-label="Iniciar conversa via WhatsApp">
+      <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    </button>
+    <div id="whatsapp-tooltip" class="whatsapp-tooltip" role="tooltip" aria-hidden="true" aria-live="polite">
+      <p class="whatsapp-tooltip-text">
+        Interaja com minha agente de IA e descubra como essa solução pode transformar o atendimento da sua empresa: contato inicial automático, resumo do atendimento, transcrição e sumarização de áudios e imagens, agendamento automático e muito mais. Para iniciar a interação com a IA, selecione a opção “Cliente” no menu inicial.
+      </p>
+    </div>
+  </div>
+
+  <!-- Non-blocking popup for WhatsApp link fallbacks -->
+  <div id="link-popup" class="link-popup" role="dialog" aria-hidden="true" aria-live="polite">
+    <div class="link-popup-card">
+      <p id="link-popup-message" class="link-popup-message"></p>
+      <div class="link-popup-actions">
+        <a id="link-popup-open" class="link-popup-open btn-primary" target="_blank" rel="noopener">Abrir</a>
+        <button id="link-popup-copy" class="link-popup-copy">Copiar link</button>
+        <button id="link-popup-close" class="link-popup-close" aria-label="Fechar">Fechar</button>
+      </div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="./js/config-particles.js"></script>
