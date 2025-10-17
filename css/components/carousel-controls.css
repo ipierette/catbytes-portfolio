@@ -53,6 +53,13 @@
     transform: translateY(-50%) scale(1);
 }
 
+/* Sempre mostrar controles na seção Skills (fora do hover) */
+#skills .carousel-control {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+}
+
 /* Efeito de hover no botão */
 .carousel-control:hover {
     transform: translateY(-50%) scale(1.15);
