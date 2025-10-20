@@ -24,11 +24,19 @@ const projects = [
         githubUrl: "https://github.com/ipierette/chat-bot-via-lactea"
     },
     {
-        title: "Mini-Portifólio",
-        description: "Versão compacta de um portfólio pessoal, criada com HTML5, CSS3 e JavaScript, focada em apresentar informações essenciais de forma clara e responsiva. Utiliza CSS modular para organização do código, animações leves para enriquecer a experiência e estrutura semântica otimizada para acessibilidade e SEO. Ideal para exibição rápida de habilidades e projetos em um formato enxuto e visualmente atraente",
-        image: "./images/projeto-miniport.webp",
-        liveUrl: "https://ipierette.github.io/mini-portifolio/",
-        githubUrl: "https://github.com/ipierette/mini-portifolio"
+        title: "Agente de IA",
+        description: "Sistema completo de atendimento automatizado via WhatsApp com múltiplos agentes de IA, construído com n8n e integração avançada para qualificação de leads, agendamento e confirmação de consultas. Funcionalidades Principais: Sistema modular com múltiplos agentes especializados e diferentes personas de atendimento. Qualificação automática de leads com coleta e análise inteligente de informações de potenciais clientes. Agendamento inteligente com marcação automática de reuniões e consultas com sincronização em tempo real. Sistema de confirmação que envia lembretes automáticos 24 horas antes e libera horários em caso de não confirmação. Memória conversacional com PostgreSQL para histórico completo de interações e contexto. Processamento multimodal com capacidade de processar áudio, imagens e texto. Gestão completa de conversas com rastreamento por sessionID e controle de leads já contatados. Reduz até 20 horas mensais gastas com confirmações manuais. Tecnologias: n8n, OpenAI API, PostgreSQL para memória conversacional, Supabase, API WhatsApp Business, React para interface de demonstração.Ideal para consultórios, clínicas, escritórios, pet shops, academias, salões de beleza e qualquer negócio que precisa automatizar atendimento via WhatsApp e reduzir ausências de clientes agendados.",
+        image: "./images/demo-agente.png",
+        liveUrl: "https://demo-agenteia.netlify.app/",
+        githubUrl: "https://github.com/ipierette/demo-agente"
+    },
+
+    {
+        title: "Site Institucional Médico - Plataforma Completa de Gestão",
+        description: "Sistema web institucional desenvolvido para clínicas e consultórios médicos, com backend robusto construído em n8n e integração avançada de IA para atendimento automatizado.Funcionalidades Principais: Chat Inteligente com OpenAI - Assistente virtual educativa que fornece orientações de saúde baseadas em fontes científicas como OMS, CDC, NIH e Ministério da Saúde. Sistema de Agendamento Inteligente com bloqueio automático de horários ocupados, finais de semana e feriados nacionais brasileiros. Gestão de Convênios com validação e categorização automática de planos de saúde. Backend com n8n e Supabase para workflows automatizados de processamento de agendamentos e sincronização com banco de dados. Validação em Tempo Real que consulta disponibilidade e retorna feedback instantâneo ao paciente. Configuração adequada de segurança e CORS para comunicação segura entre frontend e backend.Tecnologias: HTML, CSS, JavaScript, n8n para automação, OpenAI API, Supabase com PostgreSQL, hospedagem Netlify.",
+        image: "./images/simples-medico.png",
+        liveUrl: "https://simples-medico.netlify.app/",
+        githubUrl: "https://github.com/ipierette/simples-m-dico"
     }
 ];
 
