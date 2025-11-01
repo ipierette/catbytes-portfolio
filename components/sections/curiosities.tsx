@@ -1,3 +1,4 @@
+import { FaHeart } from 'react-icons/fa'
 'use client'
 
 import { motion, useInView } from 'framer-motion'
@@ -23,7 +24,7 @@ export function Curiosities() {
           className="text-4xl md:text-5xl font-comfortaa font-bold text-center mb-12 flex items-center justify-center gap-3"
         >
           <span className="text-blue-600 dark:text-green-400">{t('title')}</span>
-          <span>❤️</span>
+          <FaHeart className="text-red-500" />
         </motion.h2>
 
         <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">

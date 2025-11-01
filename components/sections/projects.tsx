@@ -1,3 +1,4 @@
+import { FaRocket } from 'react-icons/fa'
 'use client'
 
 import { motion, useInView } from 'framer-motion'

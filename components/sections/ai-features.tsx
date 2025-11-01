@@ -1,3 +1,4 @@
+import { FaRobot } from 'react-icons/fa'
 'use client'
 
 import { motion, useInView } from 'framer-motion'
@@ -620,7 +621,7 @@ export function AIFeatures() {
           className="text-4xl md:text-5xl font-comfortaa font-bold text-center mb-12 flex items-center justify-center gap-3"
         >
           <span className="text-blue-600 dark:text-green-400">{t('title')}</span>
-          <span>🤖</span>
+          <FaRobot className="text-violet-600 dark:text-violet-300" />
         </motion.h2>
 
         <motion.div

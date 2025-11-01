@@ -1,3 +1,4 @@
+import { FaUser } from 'react-icons/fa'
 'use client'
 
 import { motion } from 'framer-motion'
