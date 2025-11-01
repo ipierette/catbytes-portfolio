@@ -42,6 +42,14 @@ interface AdResult {
   ai_reason?: string
 }
 
+interface SerpApiResult {
+  title?: string
+  snippet?: string
+  link?: string
+  displayed_link?: string
+  source?: string
+}
+
 interface AIScore {
   score: number
   reason: string
@@ -233,7 +241,7 @@ export async function POST(request: NextRequest) {
 
     // Processa resultados
     let anuncios: AdResult[] = raw
-      .map(r => ({
+      .map((r: SerpApiResult) => ({
         titulo: r.title || 'Anúncio de Adoção',
         descricao: r.snippet || '',
         url: r.link || '',
