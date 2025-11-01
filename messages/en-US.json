@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "title": "Izadora Cury Pierette | CatBytes — Creative Portfolio",
+    "description": "Discover projects that combine modern design, clean code, and AI-powered solutions. Explore, get inspired, and see the future in bytes.",
+    "keywords": "react, nextjs, front-end developer, portfolio, web development, AI, artificial intelligence"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "skills": "Skills",
+    "projects": "Projects",
+    "curiosities": "Curiosities",
+    "aiFeatures": "Feline AI",
+    "contact": "Contact",
+    "themeToggle": "Toggle light/dark theme"
+  },
+  "hero": {
+    "title": "Welcome to the World of",
+    "brandName": "CatBytes",
+    "subtitle": "Where feline passion meets impeccable code. Transforming ideas into digital solutions, one meow-code at a time.",
+    "cta": "Check out my projects meow",
+    "catMessage": "Purrrr! I'm Axel, the CatBytes mascot! 🐾"
+  },
+  "about": {
+    "title": "The Developer's Den",
+    "intro": "Hello! I'm Izadora Pierette, a Full Stack Developer passionate about creating innovative and efficient digital solutions. My journey in the programming world began with the curiosity to uncover how things work behind the screens, and since then, I've been dedicated to transforming complex ideas into intuitive and functional interfaces.",
+    "description": "With a focus on HTML, advanced CSS, and JavaScript, I always seek the best clean code practices to deliver high-quality projects. I believe that, just like a perceptive cat, technology requires attention to detail, agility, and a touch of creativity to solve the most intriguing challenges.",
+    "skills": {
+      "programming": "Programming",
+      "webDevelopment": "Web Development",
+      "coffeeAndCreativity": "Coffee and Creativity",
+      "continuousLearning": "Continuous Learning"
+    }
+  },
+  "skills": {
+    "title": "Skills",
+    "description": "My skills are classified into \"Meow Levels,\" a fun analogy to proficiency in the feline and programming world.",
+    "levels": {
+      "title": "Meow Levels: Understand My Proficiency",
+      "intro": "To make the evaluation of my skills more fun and thematic, I used \"Meow Levels\" as a way to indicate my proficiency in each area. The percentage values demonstrate an estimate of time I've spent developing each skill over 4 years:",
+      "beginner": "Purring Beginner (Basic): Fundamental knowledge, capable of performing simple tasks and learning quickly, learning level between 1%-40%",
+      "intermediate": "Intermediate Meow (Medium): Good understanding and ability to apply concepts in more complex projects, with some autonomy, learning level between 41%-70%.",
+      "advanced": "Master Cat (Advanced): Solid experience, capable of solving challenging problems and optimizing solutions, learning level between 71%-99%.",
+      "expert": "Master Meow-Code (Expert): Expertise in the area, able to lead projects, innovate and act as a reference, 100% learning level.",
+      "conclusion": "Just as a cat learns and refines its hunting and socialization skills, I constantly seek to evolve in the development world!"
+    },
+    "prevButton": "Previous Skill",
+    "nextButton": "Next Skill"
+  },
+  "projects": {
+    "title": "The Project Hunt",
+    "viewProject": "View Project",
+    "viewCode": "Code",
+    "prevButton": "Previous project",
+    "nextButton": "Next project",
+    "items": {
+      "meowflix": {
+        "title": "MeowFlix AI",
+        "description": "Movie recommendation platform with generative AI using React and Google Gemini API"
+      },
+      "catbutler": {
+        "title": "CATButler",
+        "description": "Task management system with intelligent virtual assistant"
+      },
+      "chatbot": {
+        "title": "AI ChatBot",
+        "description": "Conversational chatbot with natural language processing"
+      },
+      "agent": {
+        "title": "AI Agent",
+        "description": "Intelligent agent for process automation"
+      },
+      "medical": {
+        "title": "Medical Website",
+        "description": "Professional landing page for medical clinic"
+      }
+    }
+  },
+  "curiosities": {
+    "title": "The Cat Beyond the Keyboard",
+    "paragraph1": "Three years ago, my life changed in a way I never expected. I found a tiny one-month-old kitten, alone and soaked by the rain in front of my house. I had no plans to adopt a pet, but that tiny, helpless gaze convinced me. He became Axel, and since then, it's been a journey of love, learning, and of course, some feline challenges.",
+    "paragraph2": "Raising Axel taught me a lot about patience and resilience. I remember the days when he, as a kitten, scratched everything and everyone with his sharp little claws – a real test for my calm! But with time and dedication, he became the most affectionate and playful companion I could wish for.",
+    "paragraph3": "This experience made me reflect on my own journey as a developer. Just as it's difficult to learn a new programming language, face bugs, or master a new tool, raising a cat also requires persistence and adaptation. There are moments of frustration, but the reward of seeing a project working or Axel purring on my lap is priceless. Each challenge pushed me to learn and grow, transforming obstacles into new skills, both in life and in code.",
+    "imageAxelKitten": "Photo of Axel as a kitten",
+    "imageAxelAdult": "Photo of Axel as an adult"
+  },
+  "aiFeatures": {
+    "title": "Feline AI: Smart Tools",
+    "tabs": {
+      "adopt": "Adopt a Kitten",
+      "identify": "Kitten Identifier",
+      "donate": "Need to Donate a Kitten?"
+    },
+    "adoptCat": {
+      "title": "Adopt a Kitten",
+      "description": "Provide the age, fur color, and your location so our AI can search for cat adoption ads near you.",
+      "note": "This feature uses Netlify Functions, SerpApi, and Gemini API. A real database of ads is being compiled. More accurate searches will be available in the future!",
+      "scoreInfo": "AI Score: each ad receives a score from 1 to 10, indicating reliability according to signals evaluated by the AI.",
+      "form": {
+        "age": "Age:",
+        "ageSelect": "Select",
+        "ageKitten": "Kitten",
+        "ageAdult": "Adult",
+        "color": "Fur Color:",
+        "colorPlaceholder": "Ex: Tabby, Black, White",
+        "location": "Location (City/State or ZIP):",
+        "locationPlaceholder": "Ex: New York, NY or 10001",
+        "submit": "Search Kittens"
+      }
+    },
+    "identifyCat": {
+      "title": "Kitten Identifier",
+      "description": "Upload a photo of the kitten and our AI will try to identify its approximate age, breed, and personality traits.",
+      "note": "We process your photo via Netlify Function (Gemini model). Formats: JPG/PNG/WEBP. Ideal size: 1-2 MB, maximum 8 MB. The image is processed temporarily and is not stored.",
+      "privacy": "Results are estimates and do not replace veterinary diagnosis.",
+      "form": {
+        "upload": "Choose Photo",
+        "submit": "Identify Cat",
+        "processing": "Analyzing..."
+      }
+    },
+    "donateCat": {
+      "title": "Need to Donate a Kitten?",
+      "description": "Our AI can help create an attractive and informative ad to facilitate the responsible adoption of your kitten.",
+      "form": {
+        "name": "Cat's Name:",
+        "namePlaceholder": "Ex: Whiskers",
+        "age": "Age:",
+        "color": "Color:",
+        "colorPlaceholder": "Ex: Orange tabby",
+        "personality": "Personality:",
+        "personalityPlaceholder": "Ex: Playful, affectionate",
+        "submit": "Generate Ad",
+        "generating": "Generating..."
+      }
+    }
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "subtitle": "Let's talk? Fill out the form below or find me on social media!",
+    "form": {
+      "name": "Your Name",
+      "namePlaceholder": "Enter your name",
+      "email": "Your Email",
+      "emailPlaceholder": "youremail@example.com",
+      "message": "Your Message",
+      "messagePlaceholder": "Write your message here...",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": {
+        "title": "Message Sent!",
+        "description": "Thanks for reaching out! I'll respond soon."
+      },
+      "error": {
+        "title": "Error Sending",
+        "description": "Something went wrong. Please try again."
+      }
+    },
+    "social": {
+      "title": "Find Me On Social Media",
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "email": "Email"
+    },
+    "downloadCV": "Download Resume"
+  },
+  "footer": {
+    "copyright": "© {year} CatBytes. All rights reserved.",
+    "madeWith": "Made with ❤️ and ☕ by Izadora Pierette",
+    "accessibility": "This website was developed with a focus on accessibility and performance."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "learnMore": "Learn More",
+    "backToTop": "Back to Top"
+  }
+}

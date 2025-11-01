@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "title": "Izadora Cury Pierette | CatBytes — Portfólio Criativo",
+    "description": "Conheça projetos que unem design moderno, código limpo e soluções com inteligência artificial e automação. Explore, inspire-se e veja o futuro em bytes.",
+    "keywords": "react, nextjs, desenvolvedor front-end, portfolio, web development, AI, inteligência artificial"
+  },
+  "nav": {
+    "home": "Início",
+    "about": "Sobre",
+    "skills": "Skills",
+    "projects": "Projetos",
+    "curiosities": "Curiosidades",
+    "aiFeatures": "IA Felina",
+    "contact": "Contato",
+    "themeToggle": "Alternar tema claro/escuro"
+  },
+  "hero": {
+    "title": "Bem-vindo ao Mundo",
+    "brandName": "CatBytes",
+    "subtitle": "Onde a paixão felina encontra o código impecável. Transformando ideias em soluções digitais, um miaucódigo por vez.",
+    "cta": "Conheça meus projetos miau",
+    "catMessage": "Prrrr! Sou o Axel, o gato mascote do CatBytes! 🐾"
+  },
+  "about": {
+    "title": "A Toca da Desenvolvedora",
+    "intro": "Olá! Sou Izadora Pierette, uma Desenvolvedora Full Stack apaixonada por criar soluções digitais inovadoras e eficientes. Minha jornada no mundo da programação começou com a curiosidade de desvendar como as coisas funcionam por trás das telas, e desde então, tenho me dedicado a transformar ideias complexas em interfaces intuitivas e funcionais.",
+    "description": "Com foco em HTML, CSS avançado e JavaScript, busco sempre as melhores práticas de clean code para entregar projetos de alta qualidade. Acredito que, assim como um gato perspicaz, a tecnologia exige atenção aos detalhes, agilidade e uma pitada de criatividade para resolver os desafios mais intrigantes.",
+    "skills": {
+      "programming": "Programação",
+      "webDevelopment": "Desenvolvimento Web",
+      "coffeeAndCreativity": "Café e Criatividade",
+      "continuousLearning": "Aprendizado Contínuo"
+    }
+  },
+  "skills": {
+    "title": "Skills",
+    "description": "Minhas habilidades são classificadas em \"Níveis de Miado\", uma analogia divertida à proficiência no mundo felino e da programação.",
+    "levels": {
+      "title": "Níveis de Miado: Entenda Minha Proficiência",
+      "intro": "Para tornar a avaliação das minhas habilidades mais divertida e temática, utilizei os \"Níveis de Miado\" como uma forma de indicar minha proficiência em cada área. Os valores percentuais demonstram uma estimativa de tempo que demandei desenvolvendo cada habilidade ao longo de 4 anos:",
+      "beginner": "Ronronado Iniciante (Básico): Conhecimento fundamental, capaz de realizar tarefas simples e aprender rapidamente, nível de aprendizagem entre 1%-40%",
+      "intermediate": "Miado Intermediário (Mediano): Boa compreensão e capacidade de aplicar conceitos em projetos mais complexos, com alguma autonomia, nível de aprendizagem entre 41%-70%.",
+      "advanced": "Gato Mestre (Avançado): Sólida experiência, capaz de resolver problemas desafiadores e otimizar soluções, nível de aprendizagem entre 71%-99%.",
+      "expert": "Miaucódigo Mestre (Especialista): Expertise na área, apto a liderar projetos, inovar e atuar como referência, nível de aprendizagem de 100%.",
+      "conclusion": "Assim como um gato aprende e aprimora suas habilidades de caça e socialização, eu busco constantemente evoluir no mundo do desenvolvimento!"
+    },
+    "prevButton": "Habilidade Anterior",
+    "nextButton": "Próxima Habilidade"
+  },
+  "projects": {
+    "title": "A Caça aos Projetos",
+    "viewProject": "Ver Projeto",
+    "viewCode": "Código",
+    "prevButton": "Projeto anterior",
+    "nextButton": "Próximo projeto",
+    "items": {
+      "meowflix": {
+        "title": "MeowFlix IA",
+        "description": "Plataforma de recomendação de filmes com IA generativa usando React e Google Gemini API"
+      },
+      "catbutler": {
+        "title": "CATButler",
+        "description": "Sistema de gestão de tarefas com assistente virtual inteligente"
+      },
+      "chatbot": {
+        "title": "ChatBot IA",
+        "description": "Chatbot conversacional com processamento de linguagem natural"
+      },
+      "agent": {
+        "title": "Agente IA",
+        "description": "Agente inteligente para automação de processos"
+      },
+      "medical": {
+        "title": "Site Médico",
+        "description": "Landing page profissional para clínica médica"
+      }
+    }
+  },
+  "curiosities": {
+    "title": "O Gato Além do Teclado",
+    "paragraph1": "Há três anos, minha vida mudou de uma forma que eu jamais esperava. Encontrei um pequeno gatinho de apenas um mês, sozinho e encharcado pela chuva na frente da minha casa. Eu não tinha planos de adotar um pet, mas aquele olhar minúsculo e desamparado me convenceu. Ele se tornou o Axel, e desde então, tem sido uma jornada de amor, aprendizado e, claro, alguns desafios felinos.",
+    "paragraph2": "Criar o Axel me ensinou muito sobre paciência e resiliência. Lembro-me dos dias em que ele, filhote, arranhava tudo e todos com suas garrinhas afiadas – um verdadeiro teste para a minha calma! Mas, com tempo e dedicação, ele se tornou o companheiro mais carinhoso e brincalhão que eu poderia desejar.",
+    "paragraph3": "Essa experiência me fez refletir sobre minha própria jornada como desenvolvedora. Assim como é difícil aprender uma nova linguagem de programação, enfrentar bugs ou dominar uma nova ferramenta, criar um gato também exige persistência e adaptação. Há momentos de frustração, mas a recompensa de ver um projeto funcionando ou o Axel ronronando no meu colo é inumerável. Cada desafio me impulsionou a aprender e crescer, transformando obstáculos em novas habilidades, tanto na vida quanto no código.",
+    "imageAxelKitten": "Foto de Axel quando filhote",
+    "imageAxelAdult": "Foto de Axel adulto"
+  },
+  "aiFeatures": {
+    "title": "IA Felina: Ferramentas Inteligentes",
+    "tabs": {
+      "adopt": "Adote um Gatinho",
+      "identify": "Identificador de Gatinhos",
+      "donate": "Precisa Doar um Gatinho?"
+    },
+    "adoptCat": {
+      "title": "Adote um Gatinho",
+      "description": "Informe a idade, cor do pelo e sua localidade para que nossa IA possa buscar anúncios de gatos para adoção próximos a você.",
+      "note": "Esta funcionalidade utiliza Netlify Functions, SerpApi e Gemini API. Um banco de dados real de anúncios está sendo compilado. Buscas mais precisas estarão disponíveis no futuro!",
+      "scoreInfo": "Score da IA: cada anúncio recebe uma pontuação de 1 a 10, indicando a confiabilidade segundo sinais avaliados pela IA.",
+      "form": {
+        "age": "Idade:",
+        "ageSelect": "Selecione",
+        "ageKitten": "Filhote",
+        "ageAdult": "Adulto",
+        "color": "Cor do Pelo:",
+        "colorPlaceholder": "Ex: Rajado, Preto, Branco",
+        "location": "Localização (Cidade/Estado ou CEP):",
+        "locationPlaceholder": "Ex: São Paulo, SP ou 01000-000",
+        "submit": "Buscar Gatinhos"
+      }
+    },
+    "identifyCat": {
+      "title": "Identificador de Gatinhos",
+      "description": "Faça o upload de uma foto do gatinho e nossa IA tentará identificar sua idade aproximada, raça e traços de personalidade.",
+      "note": "Processamos sua foto via Netlify Function (modelo Gemini). Formatos: JPG/PNG/WEBP. Tamanho ideal: 1-2 MB, máximo 8 MB. A imagem é processada temporariamente e não é armazenada.",
+      "privacy": "Os resultados são estimativas e não substituem diagnóstico veterinário.",
+      "form": {
+        "upload": "Escolher Foto",
+        "submit": "Identificar Gato",
+        "processing": "Analisando..."
+      }
+    },
+    "donateCat": {
+      "title": "Precisa Doar um Gatinho?",
+      "description": "Nossa IA pode ajudar a criar um anúncio atrativo e informativo para facilitar a adoção responsável do seu gatinho.",
+      "form": {
+        "name": "Nome do Gato:",
+        "namePlaceholder": "Ex: Mingau",
+        "age": "Idade:",
+        "color": "Cor:",
+        "colorPlaceholder": "Ex: Laranja rajado",
+        "personality": "Personalidade:",
+        "personalityPlaceholder": "Ex: Brincalhão, carinhoso",
+        "submit": "Gerar Anúncio",
+        "generating": "Gerando..."
+      }
+    }
+  },
+  "contact": {
+    "title": "Entre em Contato",
+    "subtitle": "Vamos conversar? Preencha o formulário abaixo ou me encontre nas redes sociais!",
+    "form": {
+      "name": "Seu Nome",
+      "namePlaceholder": "Digite seu nome",
+      "email": "Seu E-mail",
+      "emailPlaceholder": "seuemail@exemplo.com",
+      "message": "Sua Mensagem",
+      "messagePlaceholder": "Escreva sua mensagem aqui...",
+      "submit": "Enviar Mensagem",
+      "sending": "Enviando...",
+      "success": {
+        "title": "Mensagem Enviada!",
+        "description": "Obrigada pelo contato! Responderei em breve."
+      },
+      "error": {
+        "title": "Erro ao Enviar",
+        "description": "Algo deu errado. Por favor, tente novamente."
+      }
+    },
+    "social": {
+      "title": "Me Encontre Nas Redes",
+      "linkedin": "LinkedIn",
+      "github": "GitHub",
+      "email": "E-mail"
+    },
+    "downloadCV": "Baixar Currículo"
+  },
+  "footer": {
+    "copyright": "© {year} CatBytes. Todos os direitos reservados.",
+    "madeWith": "Feito com ❤️ e ☕ por Izadora Pierette",
+    "accessibility": "Este site foi desenvolvido com foco em acessibilidade e performance."
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "close": "Fechar",
+    "learnMore": "Saiba Mais",
+    "backToTop": "Voltar ao Topo"
+  }
+}
