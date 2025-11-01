@@ -198,9 +198,60 @@ function AdoptCatForm() {
   )
 }
 
-// Componente IdentifyCat (Placeholder - precisa criar API Route)
+// Componente IdentifyCat
 function IdentifyCatForm() {
   const t = useTranslations('aiFeatures.identifyCat')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<any>(null)
+  const [error, setError] = useState('')
+  const [preview, setPreview] = useState<string | null>(null)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const fileInput = (e.target as HTMLFormElement).querySelector('input[type="file"]') as HTMLInputElement
+    const file = fileInput?.files?.[0]
+
+    if (!file) {
+      setError('Por favor, selecione uma imagem')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+    setResult(null)
+
+    try {
+      const formData = new FormData()
+      formData.append('data', file)
+
+      const response = await fetch('/api/identify-cat', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro ao identificar gato')
+      }
+
+      const data = await response.json()
+      setResult(data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -209,19 +260,164 @@ function IdentifyCatForm() {
         {t('title')}
       </h3>
       <p className="text-gray-600 dark:text-gray-300">{t('description')}</p>
+
       <div className="bg-purple-100 dark:bg-purple-900/30 p-4 rounded-lg">
         <p className="text-sm text-purple-800 dark:text-purple-300">
           <strong>ℹ️ Privacidade:</strong> {t('note')}
         </p>
       </div>
-      <p className="text-sm text-gray-500 italic">🚧 API Route em desenvolvimento...</p>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
+            {t('form.image')}
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-catbytes-purple focus:outline-none bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+          />
+        </div>
+
+        {preview && (
+          <div className="relative w-full h-64 rounded-lg overflow-hidden">
+            <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-catbytes-purple text-white rounded-lg font-semibold hover:bg-catbytes-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              {t('form.submit')}...
+            </>
+          ) : (
+            <>{t('form.submit')}</>
+          )}
+        </button>
+      </form>
+
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-start gap-2 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg"
+        >
+          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+        </motion.div>
+      )}
+
+      {result && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-4"
+        >
+          <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+            <CheckCircle2 className="w-5 h-5" />
+            <p className="font-semibold">
+              Análise concluída{result.cached && ' (do cache ⚡)'}
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-200 dark:border-gray-700">
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-bold text-gray-800 dark:text-white mb-2">Idade Estimada:</h4>
+                <p className="text-gray-600 dark:text-gray-300">{result.idade}</p>
+              </div>
+
+              {result.racas && result.racas.length > 0 && (
+                <div>
+                  <h4 className="font-bold text-gray-800 dark:text-white mb-2">Raças Possíveis:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {result.racas.map((raca: string, index: number) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-catbytes-purple/20 text-catbytes-purple rounded-full text-sm"
+                      >
+                        {raca}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {result.personalidade && result.personalidade.length > 0 && (
+                <div>
+                  <h4 className="font-bold text-gray-800 dark:text-white mb-2">Personalidade:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {result.personalidade.map((trait: string, index: number) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-catbytes-pink/20 text-catbytes-pink rounded-full text-sm"
+                      >
+                        {trait}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {result.observacoes && (
+                <div>
+                  <h4 className="font-bold text-gray-800 dark:text-white mb-2">Observações:</h4>
+                  <p className="text-gray-600 dark:text-gray-300">{result.observacoes}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
 
-// Componente DonateCat (Placeholder - precisa criar API Route)
+// Componente DonateCat
 function DonateCatForm() {
   const t = useTranslations('aiFeatures.donateCat')
+  const [description, setDescription] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<any>(null)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!description.trim()) {
+      setError('Por favor, descreva o gato para doação')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+    setResult(null)
+
+    try {
+      const response = await fetch('/api/generate-ad', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description })
+      })
+
+      if (!response.ok) {
+        throw new Error('Erro ao gerar anúncio')
+      }
+
+      const data = await response.json()
+      setResult(data.data)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -230,7 +426,174 @@ function DonateCatForm() {
         {t('title')}
       </h3>
       <p className="text-gray-600 dark:text-gray-300">{t('description')}</p>
-      <p className="text-sm text-gray-500 italic">🚧 API Route em desenvolvimento...</p>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
+            {t('form.description')}
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder={t('form.descriptionPlaceholder')}
+            rows={6}
+            className="w-full px-4 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-catbytes-purple focus:outline-none bg-white dark:bg-gray-700 text-gray-800 dark:text-white resize-none"
+          />
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Inclua: idade, cor, temperamento, vacinação, castração, localização, requisitos
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-catbytes-pink text-white rounded-lg font-semibold hover:bg-catbytes-purple transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              {t('form.submit')}...
+            </>
+          ) : (
+            <>{t('form.submit')}</>
+          )}
+        </button>
+      </form>
+
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-start gap-2 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700 rounded-lg"
+        >
+          <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
+        </motion.div>
+      )}
+
+      {result && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-6"
+        >
+          <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+            <CheckCircle2 className="w-5 h-5" />
+            <p className="font-semibold">Anúncio gerado com sucesso!</p>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-2 border-gray-200 dark:border-gray-700 space-y-6">
+            {result.title && (
+              <div>
+                <h4 className="font-bold text-gray-800 dark:text-white mb-2">Título:</h4>
+                <p className="text-lg font-semibold text-catbytes-purple">{result.title}</p>
+              </div>
+            )}
+
+            {result.ad_copy && (
+              <div>
+                <h4 className="font-bold text-gray-800 dark:text-white mb-2">Texto do Anúncio:</h4>
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                  <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line">{result.ad_copy}</p>
+                </div>
+              </div>
+            )}
+
+            {result.hashtags && result.hashtags.length > 0 && (
+              <div>
+                <h4 className="font-bold text-gray-800 dark:text-white mb-2">Hashtags:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {result.hashtags.map((tag: string, index: number) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-catbytes-pink/20 text-catbytes-pink rounded-full text-sm"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {result.posting_plan && (
+              <div className="space-y-4">
+                <h4 className="font-bold text-gray-800 dark:text-white">Plano de Divulgação (7 dias):</h4>
+
+                {result.posting_plan.when && result.posting_plan.when.length > 0 && (
+                  <div>
+                    <h5 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Quando Postar:</h5>
+                    <div className="flex flex-wrap gap-2">
+                      {result.posting_plan.when.map((time: any, index: number) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded text-sm"
+                        >
+                          {time.day} {time.time}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {result.posting_plan.platforms && result.posting_plan.platforms.length > 0 && (
+                  <div>
+                    <h5 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Plataformas:</h5>
+                    <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 text-sm">
+                      {result.posting_plan.platforms.map((platform: string, index: number) => (
+                        <li key={index}>{platform}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {result.posting_plan.where_to_post && result.posting_plan.where_to_post.length > 0 && (
+                  <div>
+                    <h5 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Onde Postar:</h5>
+                    <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 text-sm">
+                      {result.posting_plan.where_to_post.map((where: string, index: number) => (
+                        <li key={index}>{where}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {result.posting_plan.who_to_tag && result.posting_plan.who_to_tag.length > 0 && (
+                  <div>
+                    <h5 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Quem Marcar:</h5>
+                    <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 text-sm">
+                      {result.posting_plan.who_to_tag.map((who: string, index: number) => (
+                        <li key={index}>{who}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {result.posting_plan.cta_tips && result.posting_plan.cta_tips.length > 0 && (
+                  <div>
+                    <h5 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Dicas de Mídia:</h5>
+                    <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 text-sm">
+                      {result.posting_plan.cta_tips.map((tip: string, index: number) => (
+                        <li key={index}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {result.posting_plan.crosspost_tips && result.posting_plan.crosspost_tips.length > 0 && (
+                  <div>
+                    <h5 className="font-semibold text-gray-700 dark:text-gray-300 mb-2">Dicas de Crosspost:</h5>
+                    <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 text-sm">
+                      {result.posting_plan.crosspost_tips.map((tip: string, index: number) => (
+                        <li key={index}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
