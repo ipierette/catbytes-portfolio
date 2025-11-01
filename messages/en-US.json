@@ -114,6 +114,7 @@
       "note": "We process your photo via Netlify Function (Gemini model). Formats: JPG/PNG/WEBP. Ideal size: 1-2 MB, maximum 8 MB. The image is processed temporarily and is not stored.",
       "privacy": "Results are estimates and do not replace veterinary diagnosis.",
       "form": {
+        "image": "Kitten Photo:",
         "upload": "Choose Photo",
         "submit": "Identify Cat",
         "processing": "Analyzing..."
@@ -130,6 +131,8 @@
         "colorPlaceholder": "Ex: Orange tabby",
         "personality": "Personality:",
         "personalityPlaceholder": "Ex: Playful, affectionate",
+        "description": "Cat Description:",
+        "descriptionPlaceholder": "Describe the cat: age, color, temperament, vaccination, neutering, location, adoption requirements...",
         "submit": "Generate Ad",
         "generating": "Generating..."
       }

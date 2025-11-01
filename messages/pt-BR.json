@@ -114,6 +114,7 @@
       "note": "Processamos sua foto via Netlify Function (modelo Gemini). Formatos: JPG/PNG/WEBP. Tamanho ideal: 1-2 MB, máximo 8 MB. A imagem é processada temporariamente e não é armazenada.",
       "privacy": "Os resultados são estimativas e não substituem diagnóstico veterinário.",
       "form": {
+        "image": "Foto do Gatinho:",
         "upload": "Escolher Foto",
         "submit": "Identificar Gato",
         "processing": "Analisando..."
@@ -130,6 +131,8 @@
         "colorPlaceholder": "Ex: Laranja rajado",
         "personality": "Personalidade:",
         "personalityPlaceholder": "Ex: Brincalhão, carinhoso",
+        "description": "Descrição do Gato:",
+        "descriptionPlaceholder": "Descreva o gato: idade, cor, temperamento, vacinação, castração, localização, requisitos para adoção...",
         "submit": "Gerar Anúncio",
         "generating": "Gerando..."
       }

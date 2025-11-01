@@ -13,7 +13,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900 pt-20"
+      className="relative min-h-screen flex items-end justify-center overflow-hidden bg-gradient-to-br from-purple-100 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 pt-20 pb-0"
     >
       {/* Background Particles Effect - Using CSS instead of particles.js for better performance */}
       <div className="absolute inset-0 overflow-hidden">
@@ -40,7 +40,7 @@ export function Hero() {
         ))}
       </div>
 
-      <div className="container mx-auto px-4 z-10 grid lg:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto px-4 z-10 grid lg:grid-cols-2 gap-12 items-end pb-8">
         {/* Text Content */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -139,7 +139,7 @@ export function Hero() {
                 alt="Axel - Gato mascote do CatBytes"
                 width={250}
                 height={250}
-                className="w-48 sm:w-56 md:w-64 lg:w-72 h-auto mx-auto drop-shadow-2xl"
+                className="w-48 sm:w-56 md:w-64 lg:w-56 h-auto mx-auto drop-shadow-2xl"
                 priority
               />
             </motion.div>

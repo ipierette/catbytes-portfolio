@@ -25,7 +25,7 @@ export function Header() {
   ]
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg"
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-md shadow-lg"
     >
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
@@ -47,7 +47,7 @@ export function Header() {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-gray-900 dark:text-gray-200 hover:text-catbytes-purple dark:hover:text-catbytes-purple transition-colors duration-300 font-medium"
+                className="text-white hover:text-catbytes-purple transition-colors duration-300 font-medium"
               >
                 {item.label}
               </a>
@@ -56,7 +56,7 @@ export function Header() {
             {/* Theme Toggle */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full bg-gray-800 dark:bg-gray-700 text-white hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+              className="p-2 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors"
               aria-label={t('themeToggle')}
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -70,7 +70,7 @@ export function Header() {
           <div className="lg:hidden flex items-center space-x-4">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white"
+              className="p-2 rounded-full bg-gray-700 text-white"
               aria-label={t('themeToggle')}
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -78,7 +78,7 @@ export function Header() {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-gray-900 dark:text-white"
+              className="p-2 text-white"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -101,7 +101,7 @@ export function Header() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className="text-gray-900 dark:text-white hover:text-catbytes-purple transition-colors duration-300"
+                    className="text-white hover:text-catbytes-purple transition-colors duration-300"
                   >
                     {item.label}
                   </a>
