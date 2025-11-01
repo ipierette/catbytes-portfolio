@@ -165,9 +165,20 @@
     "downloadCV": "Download Resume"
   },
   "footer": {
-    "copyright": "© {year} CatBytes. All rights reserved.",
-    "madeWith": "Made with ❤️ and ☕ by Izadora Pierette",
-    "accessibility": "This website was developed with a focus on accessibility and performance."
+    "tagline": "Where feline passion meets impeccable code",
+    "quickLinks": "Quick Links",
+    "connect": "Connect",
+    "rights": "All rights reserved",
+    "madeWith": "Made with",
+    "and": "and lots of",
+    "accessibility": "Developed with focus on accessibility",
+    "links": {
+      "about": "About",
+      "skills": "Skills",
+      "projects": "Projects",
+      "aiFeatures": "AI Features",
+      "contact": "Contact"
+    }
   },
   "common": {
     "loading": "Loading...",

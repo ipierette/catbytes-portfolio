@@ -165,9 +165,20 @@
     "downloadCV": "Baixar Currículo"
   },
   "footer": {
-    "copyright": "© {year} CatBytes. Todos os direitos reservados.",
-    "madeWith": "Feito com ❤️ e ☕ por Izadora Pierette",
-    "accessibility": "Este site foi desenvolvido com foco em acessibilidade e performance."
+    "tagline": "Onde a paixão felina encontra o código impecável",
+    "quickLinks": "Links Rápidos",
+    "connect": "Conecte-se",
+    "rights": "Todos os direitos reservados",
+    "madeWith": "Feito com",
+    "and": "e muito",
+    "accessibility": "Desenvolvido com foco em acessibilidade",
+    "links": {
+      "about": "Sobre",
+      "skills": "Skills",
+      "projects": "Projetos",
+      "aiFeatures": "IA Felina",
+      "contact": "Contato"
+    }
   },
   "common": {
     "loading": "Carregando...",

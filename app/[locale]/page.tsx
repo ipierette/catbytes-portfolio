@@ -5,6 +5,7 @@ import { Projects } from '@/components/sections/projects'
 import { Curiosities } from '@/components/sections/curiosities'
 import { AIFeatures } from '@/components/sections/ai-features'
 import { Contact } from '@/components/sections/contact'
+import { Footer } from '@/components/layout/footer'
 import { getTranslations } from 'next-intl/server'
 
 export default async function Home() {
@@ -19,6 +20,7 @@ export default async function Home() {
       <Curiosities />
       <AIFeatures />
       <Contact />
+      <Footer />
     </>
   )
 }

@@ -33,20 +33,24 @@ export function Curiosities() {
             transition={{ delay: 0.2 }}
             className="space-y-6"
           >
-            <div className="relative h-64 rounded-lg overflow-hidden shadow-xl border-4 border-purple-500">
+            <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-xl border-4 border-purple-500">
               <Image
                 src="/images/axel-filhote.webp"
                 alt={t('imageAxelKitten')}
-                fill
-                className="object-cover"
+                width={500}
+                height={500}
+                className="w-full h-full object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
-            <div className="relative h-64 rounded-lg overflow-hidden shadow-xl border-4 border-green-400">
+            <div className="relative w-full aspect-square rounded-lg overflow-hidden shadow-xl border-4 border-green-400">
               <Image
                 src="/images/axel-adulto.webp"
                 alt={t('imageAxelAdult')}
-                fill
-                className="object-cover"
+                width={500}
+                height={500}
+                className="w-full h-full object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </motion.div>

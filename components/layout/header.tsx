@@ -47,11 +47,11 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center" aria-label="CatBytes">
             <Image
-              src="/images/logo300x100-fundo-escuro.svg"
+              src="/images/logo-desenvolvedora.png"
               alt="Logo CatBytes"
-              width={150}
-              height={50}
-              className="h-12 w-auto"
+              width={180}
+              height={60}
+              className="h-14 w-auto"
               priority
             />
           </Link>
@@ -62,7 +62,7 @@ export function Header() {
               <a
                 key={item.href}
                 href={item.href}
-                className="text-white dark:text-gray-200 hover:text-catbytes-purple transition-colors duration-300"
+                className="text-gray-900 dark:text-gray-200 hover:text-catbytes-purple dark:hover:text-catbytes-purple transition-colors duration-300 font-medium"
               >
                 {item.label}
               </a>
@@ -85,7 +85,7 @@ export function Header() {
           <div className="lg:hidden flex items-center space-x-4">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-full bg-gray-800 text-white"
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white"
               aria-label={t('themeToggle')}
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
@@ -93,7 +93,7 @@ export function Header() {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-white"
+              className="p-2 text-gray-900 dark:text-white"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -116,7 +116,7 @@ export function Header() {
                     key={item.href}
                     href={item.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className="text-white hover:text-catbytes-purple transition-colors duration-300"
+                    className="text-gray-900 dark:text-white hover:text-catbytes-purple transition-colors duration-300"
                   >
                     {item.label}
                   </a>
