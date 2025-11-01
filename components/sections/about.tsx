@@ -1,5 +1,5 @@
-import { FaUser } from 'react-icons/fa'
 'use client'
+import { FaUser } from 'react-icons/fa'
 
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'

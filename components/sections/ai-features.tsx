@@ -1,5 +1,5 @@
-import { FaRobot } from 'react-icons/fa'
 'use client'
+import { FaRobot } from 'react-icons/fa'
 
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'

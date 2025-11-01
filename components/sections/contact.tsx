@@ -1,5 +1,5 @@
-import { FaEnvelope } from 'react-icons/fa'
 'use client'
+import { FaEnvelope } from 'react-icons/fa'
 
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'

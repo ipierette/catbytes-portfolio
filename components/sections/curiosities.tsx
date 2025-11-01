@@ -1,5 +1,5 @@
-import { FaHeart } from 'react-icons/fa'
 'use client'
+import { FaHeart } from 'react-icons/fa'
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'

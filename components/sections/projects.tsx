@@ -1,5 +1,5 @@
-import { FaRocket } from 'react-icons/fa'
 'use client'
+import { FaRocket } from 'react-icons/fa'
 
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
