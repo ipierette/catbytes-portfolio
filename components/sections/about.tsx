@@ -1,5 +1,5 @@
 'use client'
-import { FaUser } from 'react-icons/fa'
+import { FaUser, FaCat } from 'react-icons/fa'
 
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
@@ -34,7 +34,7 @@ export function About() {
           className="text-4xl md:text-5xl font-comfortaa font-bold text-center mb-12 flex items-center justify-center gap-3"
         >
           <span className="text-blue-600 dark:text-green-400">{t('title')}</span>
-          <span>🐱</span>
+          <FaCat className="text-orange-500 dark:text-orange-400" />
         </motion.h2>
 
         <div className="grid md:grid-cols-2 gap-12 items-center">

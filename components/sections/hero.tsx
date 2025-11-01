@@ -46,17 +46,17 @@ export function Hero() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-white space-y-6"
+          className="space-y-6"
         >
           <motion.h1
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-comfortaa font-bold leading-tight"
+            className="text-4xl md:text-6xl lg:text-7xl font-comfortaa font-bold leading-tight text-white dark:text-white"
           >
             {t('title')}
             <br />
-            <span className="catbytes-gradient animate-gradient text-5xl md:text-7xl lg:text-8xl">
+            <span className="bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200 dark:from-catbytes-purple dark:via-catbytes-pink dark:to-catbytes-blue bg-clip-text text-transparent animate-gradient text-5xl md:text-7xl lg:text-8xl">
               {t('brandName')}
             </span>
           </motion.h1>
@@ -65,7 +65,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-xl md:text-2xl text-gray-300 leading-relaxed"
+            className="text-xl md:text-2xl text-white/90 dark:text-gray-300 leading-relaxed"
           >
             {t('subtitle')}
           </motion.p>
@@ -91,7 +91,7 @@ export function Hero() {
               wrapper="span"
               speed={50}
               repeat={Infinity}
-              className="catbytes-gradient"
+              className="bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200 dark:from-catbytes-purple dark:via-catbytes-pink dark:to-catbytes-blue bg-clip-text text-transparent"
             />
           </motion.div>
 
