@@ -46,16 +46,19 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
   params,
 }: {
   children: React.ReactNode
-  params: { locale?: string }
+  params?: Promise<{ locale?: string }>
 }) {
+  // Await params if they exist (Next.js 15)
+  const resolvedParams = params ? await params : undefined
+
   return (
     <html
-      lang={params?.locale || 'pt-BR'}
+      lang={resolvedParams?.locale || 'pt-BR'}
       className={`${inter.variable} ${comfortaa.variable}`}
       suppressHydrationWarning
     >
