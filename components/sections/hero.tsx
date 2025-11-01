@@ -137,9 +137,9 @@ export function Hero() {
               <Image
                 src="/images/gato-sentado.webp"
                 alt="Axel - Gato mascote do CatBytes"
-                width={500}
-                height={500}
-                className="w-full h-auto drop-shadow-2xl"
+                width={400}
+                height={400}
+                className="w-full max-w-sm h-auto mx-auto drop-shadow-2xl"
                 priority
               />
             </motion.div>

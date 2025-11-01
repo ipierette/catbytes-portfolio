@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -11,18 +11,8 @@ import Image from 'next/image'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
   const { theme, setTheme } = useTheme()
   const t = useTranslations('nav')
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   const navItems = [
     { href: '#hero', label: t('home') },
@@ -35,12 +25,7 @@ export function Header() {
   ]
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg'
-          : 'bg-gray-900'
-      }`}
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-lg"
     >
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
