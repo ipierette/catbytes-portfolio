@@ -232,7 +232,7 @@ export const handler = async (event) => {
 
     // Fallback se nada passou no filtro
     if (!anuncios.length) {
-      const qBase = encodeURIComponent(terms.join(' '));
+      const qBase = encodeURIComponent(baseTerms.join(' ')); // FIX: era 'terms', agora 'baseTerms'
       anuncios = [
         {
           titulo: 'Resultados de adoção no Google',
@@ -254,7 +254,7 @@ export const handler = async (event) => {
         mensagem: anuncios.length > 1
           ? 'Veja os anúncios de adoção encontrados.'
           : 'Não achamos anúncios específicos; sugerimos uma busca direta.',
-        meta: { engine: 'serpapi-google', terms, sites: SOURCE_SITES }
+        meta: { engine: 'serpapi-google', terms: baseTerms, sites: SOURCE_SITES } // FIX: era 'terms', agora 'baseTerms'
       })
     };
   } catch (err) {
