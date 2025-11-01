@@ -79,13 +79,13 @@ export function Hero() {
           >
             <TypeAnimation
               sequence={[
-                'Criatividade',
+                t('typing.creativity'),
                 2000,
-                'Código',
+                t('typing.code'),
                 2000,
-                'Inteligência Artificial',
+                t('typing.ai'),
                 2000,
-                'Paixão por Tecnologia',
+                t('typing.passion'),
                 2000,
               ]}
               wrapper="span"

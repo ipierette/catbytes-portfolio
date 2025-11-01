@@ -1,5 +1,5 @@
 'use client'
-import { FaRocket } from 'react-icons/fa'
+import { FaRocket, FaLightbulb } from 'react-icons/fa'
 
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
@@ -65,7 +65,7 @@ export function Projects() {
           className="text-4xl md:text-5xl font-comfortaa font-bold text-center mb-12 flex items-center justify-center gap-3"
         >
           <span className="text-blue-600 dark:text-green-400">{t('title')}</span>
-          <span>💡</span>
+          <FaLightbulb className="text-yellow-500 dark:text-yellow-400" />
         </motion.h2>
 
         <motion.div

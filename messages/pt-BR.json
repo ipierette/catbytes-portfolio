@@ -19,7 +19,13 @@
     "brandName": "CatBytes",
     "subtitle": "Onde a paixão felina encontra o código impecável. Transformando ideias em soluções digitais, um miaucódigo por vez.",
     "cta": "Conheça meus projetos miau",
-    "catMessage": "Prrrr! Sou o Axel, o gato mascote do CatBytes! 🐾"
+    "catMessage": "Prrrr! Sou o Axel, o gato mascote do CatBytes! 🐾",
+    "typing": {
+      "creativity": "Criatividade",
+      "code": "Código",
+      "ai": "Inteligência Artificial",
+      "passion": "Paixão por Tecnologia"
+    }
   },
   "about": {
     "title": "A Toca da Desenvolvedora",
@@ -139,7 +145,7 @@
     }
   },
   "contact": {
-    "title": "Entre em Contato",
+    "title": "Me Encontre na Caixa de Papelão Digital",
     "subtitle": "Vamos conversar? Preencha o formulário abaixo ou me encontre nas redes sociais!",
     "form": {
       "name": "Seu Nome",

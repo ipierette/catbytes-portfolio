@@ -1,5 +1,5 @@
 'use client'
-import { FaEnvelope } from 'react-icons/fa'
+import { FaEnvelope, FaBox } from 'react-icons/fa'
 
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
@@ -30,9 +30,10 @@ export function Contact() {
         <motion.h2
           initial={{ opacity: 0, y: 50 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          className="text-4xl md:text-5xl font-comfortaa font-bold text-center mb-4"
+          className="text-4xl md:text-5xl font-comfortaa font-bold text-center mb-4 flex items-center justify-center gap-3"
         >
-          {t('title')}
+          <span className="text-blue-600 dark:text-green-400">{t('title')}</span>
+          <FaBox className="text-amber-700 dark:text-amber-600" />
         </motion.h2>
 
         <motion.p

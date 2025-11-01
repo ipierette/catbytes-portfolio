@@ -19,7 +19,13 @@
     "brandName": "CatBytes",
     "subtitle": "Where feline passion meets impeccable code. Transforming ideas into digital solutions, one meow-code at a time.",
     "cta": "Check out my projects meow",
-    "catMessage": "Purrrr! I'm Axel, the CatBytes mascot! 🐾"
+    "catMessage": "Purrrr! I'm Axel, the CatBytes mascot! 🐾",
+    "typing": {
+      "creativity": "Creativity",
+      "code": "Code",
+      "ai": "Artificial Intelligence",
+      "passion": "Passion for Technology"
+    }
   },
   "about": {
     "title": "The Developer's Den",
@@ -139,7 +145,7 @@
     }
   },
   "contact": {
-    "title": "Get in Touch",
+    "title": "Find Me in the Digital Cardboard Box",
     "subtitle": "Let's talk? Fill out the form below or find me on social media!",
     "form": {
       "name": "Your Name",

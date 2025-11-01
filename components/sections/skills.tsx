@@ -49,8 +49,8 @@ export function Skills() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="text-4xl md:text-5xl font-comfortaa font-bold text-center mb-4 flex items-center justify-center gap-3"
         >
-          <FaBook className="text-violet-600 dark:text-violet-300" />
           <span className="text-blue-600 dark:text-green-400">{t('title')}</span>
+          <FaBook className="text-violet-600 dark:text-violet-300" />
         </motion.h2>
 
         <motion.p
