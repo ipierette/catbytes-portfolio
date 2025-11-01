@@ -1,16 +1,56 @@
-[build]
-  # Seu site é estático (sem build). Se você tiver uma pasta "dist", mude aqui.
-  publish   = "."
-  functions = "netlify/functions"
+# =================================================================
+# NETLIFY CONFIGURATION FOR NEXT.JS
+# =================================================================
 
+# Build Configuration
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# Build Environment Variables
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
+
+# Next.js Plugin (ESSENTIAL for Next.js on Netlify)
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Netlify Functions (para API Routes antigas se necessário)
 [functions]
-  # Usa o empacotador padrão (rápido). Não precisamos de libs nativas.
+  directory = "netlify/functions"
   node_bundler = "esbuild"
-  # Mantém o runtime moderno (fetch nativo).
-  included_files = []
   external_node_modules = []
 
-# Execução local (opcional) com `npx netlify dev`
+# Development Settings (netlify dev)
 [dev]
-  framework = "#static"
-  publish   = "."
+  command = "npm run dev"
+  port = 3000
+  targetPort = 3000
+  framework = "#custom"
+
+# Redirects
+[[redirects]]
+  from = "/"
+  to = "/pt-BR"
+  status = 302
+  force = false
+
+# Headers para segurança e performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "origin-when-cross-origin"
+    X-XSS-Protection = "1; mode=block"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
