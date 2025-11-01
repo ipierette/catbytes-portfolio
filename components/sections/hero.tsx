@@ -13,15 +13,15 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-end justify-center overflow-hidden bg-gradient-to-br from-purple-100 via-blue-50 to-pink-50 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 pt-20 pb-0"
+      className="relative min-h-screen flex items-end justify-center overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 dark:from-gray-900 dark:via-purple-900 dark:to-blue-900 pt-20 pb-0"
     >
       {/* Background Particles Effect - Using CSS instead of particles.js for better performance */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent"></div>
+        <div className="absolute w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-300/30 dark:from-purple-900/20 via-transparent to-transparent"></div>
         {[...Array(50)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 bg-white rounded-full"
+            className="absolute w-2 h-2 bg-white/70 dark:bg-white rounded-full"
             initial={{
               x: Math.random() * window.innerWidth,
               y: Math.random() * window.innerHeight,
@@ -40,7 +40,7 @@ export function Hero() {
         ))}
       </div>
 
-      <div className="container mx-auto px-4 z-10 grid lg:grid-cols-2 gap-12 items-end pb-8">
+      <div className="container mx-auto px-4 z-10 grid lg:grid-cols-2 gap-12 items-end">
         {/* Text Content */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -123,23 +123,24 @@ export function Hero() {
             damping: 20,
             delay: 0.3,
           }}
-          className="relative"
+          className="relative flex items-end"
         >
           <div
-            className="relative w-full max-w-md mx-auto cursor-pointer"
+            className="relative w-full max-w-md mx-auto cursor-pointer flex items-end"
             onMouseEnter={() => setShowCatMessage(true)}
             onMouseLeave={() => setShowCatMessage(false)}
           >
             <motion.div
               animate={{ y: [0, -20, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              className="w-full flex justify-center"
             >
               <Image
                 src="/images/gato-sentado.webp"
                 alt="Axel - Gato mascote do CatBytes"
                 width={250}
                 height={250}
-                className="w-48 sm:w-56 md:w-64 lg:w-56 h-auto mx-auto drop-shadow-2xl"
+                className="w-48 sm:w-56 md:w-64 lg:w-56 h-auto drop-shadow-2xl"
                 priority
               />
             </motion.div>
@@ -162,13 +163,13 @@ export function Hero() {
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20"
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 2 }}
       >
-        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+        <div className="w-6 h-10 border-2 border-white/80 dark:border-white rounded-full flex justify-center backdrop-blur-sm">
           <motion.div
-            className="w-1.5 h-3 bg-white rounded-full mt-2"
+            className="w-1.5 h-3 bg-white/80 dark:bg-white rounded-full mt-2"
             animate={{ y: [0, 16, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
           />
