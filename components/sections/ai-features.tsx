@@ -408,12 +408,20 @@ function DonateCatForm() {
       })
 
       if (!response.ok) {
-        throw new Error('Erro ao gerar anúncio')
+        const errorData = await response.json().catch(() => ({ error: 'Erro desconhecido' }))
+        throw new Error(errorData.error || errorData.details || `Erro ${response.status}`)
       }
 
       const data = await response.json()
+      console.log('Response data:', data)
+
+      if (!data.data) {
+        throw new Error('Resposta inválida da API')
+      }
+
       setResult(data.data)
     } catch (err) {
+      console.error('Generate ad error:', err)
       setError(err instanceof Error ? err.message : 'Erro desconhecido')
     } finally {
       setLoading(false)

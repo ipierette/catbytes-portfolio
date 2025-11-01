@@ -169,14 +169,22 @@ export async function POST(request: NextRequest) {
     )
 
     if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Gemini API error:', errorData)
-      throw new Error('Falha ao chamar Gemini API')
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+      console.error('Gemini API error:', response.status, errorData)
+      throw new Error(`Gemini API falhou: ${response.status} - ${JSON.stringify(errorData)}`)
     }
 
     const data = await response.json()
+    console.log('Gemini response:', JSON.stringify(data).substring(0, 500))
+
     const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || ""
 
+    if (!text) {
+      console.error('No text in response:', data)
+      throw new Error('Gemini retornou resposta vazia')
+    }
+
+    console.log('Generated text:', text.substring(0, 200))
     const parsedData = tryParseJSON(text) ?? { raw: text }
 
     // Cache the result

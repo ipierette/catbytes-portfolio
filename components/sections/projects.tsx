@@ -81,6 +81,7 @@ export function Projects() {
                 alt={t(`items.${currentProject.id}.title`)}
                 fill
                 className="object-cover rounded-lg"
+                unoptimized
               />
             </div>
 
