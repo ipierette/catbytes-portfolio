@@ -73,9 +73,9 @@ export function Skills() {
             return (
               <motion.div
                 key={skill.name}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.03, duration: 0.3 }}
                 className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
               >
                 {/* Header */}
@@ -95,11 +95,9 @@ export function Skills() {
                   <motion.div
                     initial={{ width: 0 }}
                     animate={isInView ? { width: `${skill.level}%` } : { width: 0 }}
-                    transition={{ duration: 1, delay: index * 0.05 + 0.3, ease: 'easeOut' }}
-                    className={`h-full bg-gradient-to-r ${skill.color} rounded-full relative`}
-                  >
-                    <div className="absolute inset-0 bg-white/20 animate-pulse" />
-                  </motion.div>
+                    transition={{ duration: 0.8, delay: index * 0.03, ease: 'easeOut' }}
+                    className={`h-full bg-gradient-to-r ${skill.color} rounded-full`}
+                  />
                 </div>
               </motion.div>
             )
