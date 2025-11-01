@@ -208,7 +208,7 @@ export async function POST(request: NextRequest) {
     if (color) baseTerms.push(`gato ${color}`)
     if (age) baseTerms.push(age)
 
-    const siteFilter = SOURCE_SITES.map(s => `site:${s}`).join(' OR ')
+    const siteFilter = SOURCE_SITES.map((s: string) => `site:${s}`).join(' OR ')
 
     let query: string
     if (localizacao) {
@@ -248,16 +248,16 @@ export async function POST(request: NextRequest) {
         fonte: r.displayed_link || r.source || 'desconhecida',
         score: 0
       }))
-      .filter(a => {
+      .filter((a: AdResult) => {
         if (!a.descricao || a.descricao.length < 20) return false
         if (!a.url) return false
-        if (BAD_WORDS.some(w => a.descricao.toLowerCase().includes(w))) return false
+        if (BAD_WORDS.some((w: string) => a.descricao.toLowerCase().includes(w))) return false
         return true
       })
 
     // Filtro por localização
     if (localizacao && anuncios.length > 0) {
-      const locMatch = anuncios.filter(a =>
+      const locMatch = anuncios.filter((a: AdResult) =>
         a.descricao.toLowerCase().includes(localizacao.toLowerCase()) ||
         a.titulo.toLowerCase().includes(localizacao.toLowerCase())
       )
@@ -271,7 +271,7 @@ export async function POST(request: NextRequest) {
       const adsForAI = anuncios.slice(0, 6)
       console.log(`Analisando ${adsForAI.length} anúncios com IA`)
 
-      const scoringPromises = adsForAI.map(ad =>
+      const scoringPromises = adsForAI.map((ad: AdResult) =>
         getAIScore(ad, body, GEMINI_KEY).catch(() => ({
           score: 5,
           reason: 'Erro na análise',
@@ -281,7 +281,7 @@ export async function POST(request: NextRequest) {
 
       const scores = await Promise.all(scoringPromises)
 
-      adsForAI.forEach((ad, index) => {
+      adsForAI.forEach((ad: AdResult, index: number) => {
         const aiResult = scores[index]
         ad.score = aiResult.score / 10 // Normaliza 0-1
         ad.is_adopted = aiResult.is_adopted
@@ -290,19 +290,19 @@ export async function POST(request: NextRequest) {
 
       // Scoring simples para o resto
       if (anuncios.length > 6) {
-        anuncios.slice(6).forEach(ad => {
+        anuncios.slice(6).forEach((ad: AdResult) => {
           ad.score = getSimpleScore(ad, body)
         })
       }
     } else {
       // Fallback: scoring simples
-      anuncios.forEach(ad => {
+      anuncios.forEach((ad: AdResult) => {
         ad.score = getSimpleScore(ad, body)
       })
     }
 
     // Ordena e limita
-    anuncios.sort((a, b) => (b.score || 0) - (a.score || 0))
+    anuncios.sort((a: AdResult, b: AdResult) => (b.score || 0) - (a.score || 0))
     anuncios = anuncios.slice(0, 6)
 
     // Fallback se vazio
