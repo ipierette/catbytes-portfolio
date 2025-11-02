@@ -137,7 +137,7 @@ export function Hero() {
             transition={{ duration: 0.8 }}
             className="relative"
           >
-            {/* Cat - Small Decorative Element (top right) */}
+            {/* Cat - Small Decorative Element (bottom right) */}
             <motion.div
               initial={{ opacity: 0, scale: 0, rotate: -180 }}
               animate={{ opacity: 1, scale: 1, rotate: 0 }}
@@ -147,17 +147,17 @@ export function Hero() {
                 damping: 15,
                 delay: 0.5,
               }}
-              className="absolute -top-8 -right-4 z-20 cursor-pointer"
+              className="absolute -bottom-4 -right-4 z-20 cursor-pointer"
               onTouchStart={() => setShowCatMessage(true)}
               onTouchEnd={() => setTimeout(() => setShowCatMessage(false), 2000)}
             >
               <div className="relative">
-                <div className="relative w-20 h-20 hover:scale-110 transition-transform duration-300">
+                <div className="relative w-16 h-16 hover:scale-110 transition-transform duration-300">
                   <Image
                     src="/images/gato-sentado.webp"
                     alt="Axel"
-                    width={80}
-                    height={80}
+                    width={64}
+                    height={64}
                     className="w-full h-auto drop-shadow-xl opacity-90"
                     priority
                   />
@@ -167,14 +167,14 @@ export function Hero() {
                 <AnimatePresence>
                   {showCatMessage && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                      initial={{ opacity: 0, scale: 0.8, y: -10 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                      exit={{ opacity: 0, scale: 0.8, y: -10 }}
                       transition={{ duration: 0.3 }}
-                      className="absolute -bottom-16 -left-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-xl shadow-2xl text-[10px] border border-gray-200 dark:border-gray-700 z-[1050] w-32"
+                      className="absolute -top-20 -left-8 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-xl shadow-2xl text-[10px] border border-gray-200 dark:border-gray-700 z-[1050] w-32"
                     >
                       <p className="font-medium leading-tight">{t('catMessage')}</p>
-                      <div className="absolute -top-2 right-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-white dark:border-b-gray-800"></div>
+                      <div className="absolute -bottom-2 right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white dark:border-t-gray-800"></div>
                     </motion.div>
                   )}
                 </AnimatePresence>
