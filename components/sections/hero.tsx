@@ -5,49 +5,20 @@ import { useTranslations } from 'next-intl'
 import { TypeAnimation } from 'react-type-animation'
 import Image from 'next/image'
 import { useState } from 'react'
-import { ArrowDown, Github, Linkedin, FileText } from 'lucide-react'
+import { AnimatedParticles } from '@/components/ui/animated-particles'
+import { GitHubStats } from '@/components/ui/github-stats'
 
 export function Hero() {
   const t = useTranslations('hero')
   const [showCatMessage, setShowCatMessage] = useState(false)
-
-  // Neon colors for particles
-  const neonColors = [
-    'bg-green-400', // shock green
-    'bg-purple-500', // purple
-    'bg-blue-500', // blue
-    'bg-emerald-400' // neon green
-  ]
 
   return (
     <section
       id="hero"
       className="relative min-h-screen flex items-end justify-center overflow-hidden bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 pt-20 pb-0"
     >
-      {/* Background Particles Effect - Neon particles with opacity */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-200/30 dark:from-blue-900/30 via-transparent to-transparent"></div>
-        {[...Array(50)].map((_, i) => (
-          <motion.div
-            key={i}
-            className={`absolute w-2 h-2 ${neonColors[i % neonColors.length]}/40 dark:${neonColors[i % neonColors.length]}/60 rounded-full blur-sm`}
-            initial={{
-              x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 1000,
-              y: typeof window !== 'undefined' ? Math.random() * window.innerHeight : Math.random() * 800,
-              opacity: Math.random() * 0.4 + 0.2,
-            }}
-            animate={{
-              y: typeof window !== 'undefined' ? [null, Math.random() * window.innerHeight] : [null, Math.random() * 800],
-              opacity: [null, Math.random() * 0.4 + 0.2],
-            }}
-            transition={{
-              duration: Math.random() * 20 + 10,
-              repeat: Infinity,
-              repeatType: 'reverse',
-            }}
-          />
-        ))}
-      </div>
+      {/* Background Particles Effect */}
+      <AnimatedParticles />
 
       {/* Desktop and Tablet Layout */}
       <div className="hidden md:grid container mx-auto px-4 z-10 md:grid-cols-2 gap-12 items-end">
@@ -105,41 +76,8 @@ export function Hero() {
             />
           </motion.div>
 
-          {/* Professional Contact Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.5 }}
-            className="flex items-center gap-4 pt-4"
-          >
-            <a
-              href="https://github.com/ipierette"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:scale-110 transition-transform shadow-lg"
-              aria-label="GitHub"
-            >
-              <Github className="w-5 h-5" />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/izadora-cury-pierette-7a7754253/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 bg-blue-600 text-white rounded-lg hover:scale-110 transition-transform shadow-lg"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-5 h-5" />
-            </a>
-            <a
-              href="https://drive.google.com/file/d/1JY_hUoeiW-IVyCuJ9yg9CS63QZ3GZzDq/view?usp=drive_link"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 bg-catbytes-purple text-white rounded-lg hover:scale-110 transition-transform shadow-lg"
-              aria-label={t('resume') || 'Download Resume'}
-            >
-              <FileText className="w-5 h-5" />
-            </a>
-          </motion.div>
+          {/* GitHub Stats - Dynamic */}
+          <GitHubStats />
         </motion.div>
 
         {/* Cat Image with Hover Effect */}
@@ -246,40 +184,23 @@ export function Hero() {
             />
           </motion.div>
 
-          {/* Compact Social Links */}
+          {/* Compact Stats for Mobile */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.5 }}
-            className="flex items-center gap-2 pt-2"
+            className="pt-2"
           >
-            <a
-              href="https://github.com/ipierette"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg hover:scale-110 transition-transform shadow-lg"
-              aria-label="GitHub"
-            >
-              <Github className="w-4 h-4" />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/izadora-cury-pierette-7a7754253/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-blue-600 text-white rounded-lg hover:scale-110 transition-transform shadow-lg"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="w-4 h-4" />
-            </a>
-            <a
-              href="https://drive.google.com/file/d/1JY_hUoeiW-IVyCuJ9yg9CS63QZ3GZzDq/view?usp=drive_link"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 bg-catbytes-purple text-white rounded-lg hover:scale-110 transition-transform shadow-lg"
-              aria-label={t('resume') || 'CV'}
-            >
-              <FileText className="w-4 h-4" />
-            </a>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+                <p className="text-xs font-bold text-catbytes-purple dark:text-catbytes-pink">250+</p>
+                <p className="text-[10px] text-gray-600 dark:text-gray-400">Commits</p>
+              </div>
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+                <p className="text-xs font-bold text-catbytes-blue">18</p>
+                <p className="text-[10px] text-gray-600 dark:text-gray-400">Repos</p>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
 

@@ -1,7 +1,7 @@
 'use client'
 import { FaRocket, FaLightbulb } from 'react-icons/fa'
 
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -101,66 +101,85 @@ export function Projects() {
           transition={{ delay: 0.2 }}
           className="max-w-6xl mx-auto"
         >
-          {/* Main Project Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700">
-            <div className="grid lg:grid-cols-5 gap-0">
+          {/* Main Project Card - Fixed height */}
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 h-[600px] lg:h-[500px]">
+            <div className="grid lg:grid-cols-5 gap-0 h-full">
               {/* Image Section - Takes 3 columns */}
-              <div className="lg:col-span-3 relative h-64 md:h-80 lg:h-full min-h-[400px] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800">
+              <div className="lg:col-span-3 relative h-64 lg:h-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-6">
                 {currentProject.featured && (
                   <div className="absolute top-4 left-4 z-10 bg-gradient-to-r from-catbytes-purple to-catbytes-pink text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
                     ⭐ Featured Project
                   </div>
                 )}
-                <Image
-                  src={currentProject.image}
-                  alt={t(`items.${currentProject.id}.title`)}
-                  fill
-                  className="object-cover"
-                  priority={currentIndex === 0}
-                  placeholder="blur"
-                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
-                />
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentProject.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    className="relative w-full h-full"
+                  >
+                    <Image
+                      src={currentProject.image}
+                      alt={t(`items.${currentProject.id}.title`)}
+                      fill
+                      className="object-contain"
+                      priority={currentIndex === 0}
+                      sizes="(max-width: 1024px) 100vw, 60vw"
+                    />
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
               {/* Content Section - Takes 2 columns */}
-              <div className="lg:col-span-2 p-8 flex flex-col justify-between">
-                <div className="space-y-4">
-                  {/* Project Type Badge */}
-                  <div className="flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-catbytes-purple" />
-                    <span className="text-sm font-semibold text-catbytes-purple dark:text-catbytes-pink uppercase tracking-wide">
-                      {currentProject.type}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-3xl lg:text-4xl font-comfortaa font-bold text-gray-900 dark:text-white leading-tight">
-                    {t(`items.${currentProject.id}.title`)}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-base lg:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {t(`items.${currentProject.id}.description`)}
-                  </p>
-
-                  {/* Tech Stack */}
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                      <Code2 className="w-4 h-4" />
-                      <span>Tech Stack:</span>
+              <div className="lg:col-span-2 p-6 lg:p-8 flex flex-col justify-between overflow-y-auto">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentProject.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-3 lg:space-y-4"
+                  >
+                    {/* Project Type Badge */}
+                    <div className="flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-catbytes-purple" />
+                      <span className="text-sm font-semibold text-catbytes-purple dark:text-catbytes-pink uppercase tracking-wide">
+                        {currentProject.type}
+                      </span>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {currentProject.stack.map((tech, index) => (
-                        <span
-                          key={index}
-                          className="px-3 py-1 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium border border-blue-200 dark:border-gray-600"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+
+                    {/* Title */}
+                    <h3 className="text-2xl lg:text-3xl font-comfortaa font-bold text-gray-900 dark:text-white leading-tight">
+                      {t(`items.${currentProject.id}.title`)}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-sm lg:text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+                      {t(`items.${currentProject.id}.description`)}
+                    </p>
+
+                    {/* Tech Stack */}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        <Code2 className="w-4 h-4" />
+                        <span>Tech Stack:</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {currentProject.stack.map((tech, index) => (
+                          <span
+                            key={`${currentProject.id}-${tech}-${index}`}
+                            className="px-3 py-1 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium border border-blue-200 dark:border-gray-600"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </motion.div>
+                </AnimatePresence>
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 mt-6">
