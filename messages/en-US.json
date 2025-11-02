@@ -20,6 +20,7 @@
     "subtitle": "Where feline passion meets impeccable code. Transforming ideas into digital solutions, one meow-code at a time.",
     "cta": "Check out my projects meow",
     "catMessage": "Purrrr! I'm Axel, the CatBytes mascot! 🐾",
+    "resume": "Download Resume",
     "typing": {
       "creativity": "Creativity",
       "code": "Code",
@@ -55,6 +56,7 @@
   },
   "projects": {
     "title": "The Project Hunt",
+    "subtitle": "Projects that demonstrate technical expertise and innovative solutions",
     "viewProject": "View Project",
     "viewCode": "Code",
     "prevButton": "Previous project",
@@ -62,23 +64,23 @@
     "items": {
       "meowflix": {
         "title": "MeowFlix AI",
-        "description": "Movie recommendation platform with generative AI using React and Google Gemini API"
+        "description": "Movie recommendation system with AI that analyzes user mood through natural language (Google Gemini) and suggests personalized films using real TMDB data. Accessible and responsive interface with netflix-inspired theme."
       },
       "catbutler": {
-        "title": "CATButler",
-        "description": "Task management system with intelligent virtual assistant"
+        "title": "CATButler - AI Home Assistant",
+        "description": "Responsive SPA Dashboard-style that transforms domestic routines with AI, helping organize tasks, plan meals and shop intelligently in a sustainable way. Combines modern interface, gamification and personalized recommendations."
       },
       "chatbot": {
-        "title": "AI ChatBot",
-        "description": "Conversational chatbot with natural language processing"
+        "title": "Via Lactea Chat-Bot",
+        "description": "Front-end application that simulates a chatbot with dynamic personality and contextual responses. Incorporates interactive visual effects, smooth animations and responsive design with advanced DOM manipulation and modular logic."
       },
       "agent": {
-        "title": "AI Agent",
-        "description": "Intelligent agent for process automation"
+        "title": "WhatsApp AI Agent",
+        "description": "Automated WhatsApp service system with multiple AI agents. Performs lead qualification, appointment scheduling and confirmation. Features conversational memory (PostgreSQL), multimodal processing (audio, image and text) and automatic reminder sending."
       },
       "medical": {
-        "title": "Medical Website",
-        "description": "Professional landing page for medical clinic"
+        "title": "Medical Institutional Website - Complete Management Platform",
+        "description": "Web system for clinics and offices with n8n backend and integrated AI. Includes intelligent chat with OpenAI based on scientific sources, scheduling with automatic weekend and holiday blocking, insurance management and real-time validation."
       }
     }
   },

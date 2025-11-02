@@ -20,6 +20,7 @@
     "subtitle": "Onde a paixão felina encontra o código impecável. Transformando ideias em soluções digitais, um miaucódigo por vez.",
     "cta": "Conheça meus projetos miau",
     "catMessage": "Prrrr! Sou o Axel, o gato mascote do CatBytes! 🐾",
+    "resume": "Baixar Currículo",
     "typing": {
       "creativity": "Criatividade",
       "code": "Código",
@@ -55,6 +56,7 @@
   },
   "projects": {
     "title": "A Caça aos Projetos",
+    "subtitle": "Projetos que demonstram expertise técnica e soluções inovadoras",
     "viewProject": "Ver Projeto",
     "viewCode": "Código",
     "prevButton": "Projeto anterior",
@@ -62,23 +64,23 @@
     "items": {
       "meowflix": {
         "title": "MeowFlix IA",
-        "description": "Plataforma de recomendação de filmes com IA generativa usando React e Google Gemini API"
+        "description": "Sistema de recomendação de filmes com IA que analisa o humor do usuário através de linguagem natural (Google Gemini) e sugere filmes personalizados usando dados reais do TMDB. Interface acessível e responsiva com tema netflix-inspired."
       },
       "catbutler": {
-        "title": "CATButler",
-        "description": "Sistema de gestão de tarefas com assistente virtual inteligente"
+        "title": "CATButler - Assistente de IA para Casa",
+        "description": "SPA responsiva estilo Dashboard que transforma a rotina doméstica com IA, ajudando a organizar tarefas, planejar refeições e fazer compras inteligentes de forma sustentável. Une interface moderna, gamificação e recomendações personalizadas."
       },
       "chatbot": {
-        "title": "ChatBot IA",
-        "description": "Chatbot conversacional com processamento de linguagem natural"
+        "title": "Chat-Bot Via Lactea",
+        "description": "Aplicação front-end que simula um chatbot com personalidade dinâmica e respostas contextuais. Incorpora efeitos visuais interativos, animações suaves e design responsivo com manipulação avançada do DOM e lógica modular."
       },
       "agent": {
-        "title": "Agente IA",
-        "description": "Agente inteligente para automação de processos"
+        "title": "Agente de IA WhatsApp",
+        "description": "Sistema automatizado de atendimento via WhatsApp com múltiplos agentes de IA. Realiza qualificação de leads, agendamento e confirmação de consultas. Possui memória conversacional (PostgreSQL), processamento multimodal (áudio, imagem e texto) e envio de lembretes automáticos."
       },
       "medical": {
-        "title": "Site Médico",
-        "description": "Landing page profissional para clínica médica"
+        "title": "Site Institucional Médico - Plataforma Completa de Gestão",
+        "description": "Sistema web para clínicas e consultórios com backend em n8n e IA integrada. Inclui chat inteligente com OpenAI baseado em fontes científicas, agendamento com bloqueio automático de finais de semana e feriados, gestão de convênios e validação em tempo real."
       }
     }
   },
