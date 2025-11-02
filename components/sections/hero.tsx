@@ -12,6 +12,10 @@ export function Hero() {
   const t = useTranslations('hero')
   const [showCatMessage, setShowCatMessage] = useState(false)
 
+  const toggleCatMessage = () => {
+    setShowCatMessage(!showCatMessage)
+  }
+
   return (
     <section
       id="hero"
@@ -80,7 +84,7 @@ export function Hero() {
           <GitHubStats />
         </motion.div>
 
-        {/* Cat Image with Hover Effect - Stays at Bottom */}
+        {/* Cat Image with Hover Effect - Sits at Bottom of Hero */}
         <motion.div
           initial={{ opacity: 0, scale: 0, rotate: -180 }}
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
@@ -90,12 +94,11 @@ export function Hero() {
             damping: 20,
             delay: 0.3,
           }}
-          className="relative flex items-end justify-center pb-8"
+          className="relative flex items-end justify-center"
         >
           <div
             className="relative w-full max-w-md mx-auto cursor-pointer flex items-end"
-            onMouseEnter={() => setShowCatMessage(true)}
-            onMouseLeave={() => setShowCatMessage(false)}
+            onClick={toggleCatMessage}
           >
             <motion.div
               animate={{ y: [0, -20, 0] }}
@@ -129,20 +132,9 @@ export function Hero() {
       </div>
 
       {/* Mobile Layout - Cat Silhouette on Right (15%) */}
-      <div className="md:hidden relative w-full h-full z-10 flex">
+      <div className="md:hidden relative w-full min-h-screen z-10 flex">
         {/* Left Side: Text Content (85%) */}
         <div className="w-[85%] px-4 py-12 flex flex-col justify-center relative z-20">
-          {/* Cat Speech Bubble - Top Left */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
-            className="absolute top-4 left-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-4 py-3 rounded-2xl shadow-xl text-xs border-2 border-gray-200 dark:border-gray-700 max-w-[200px]"
-          >
-            <p className="font-medium">{t('catMessage')}</p>
-            <div className="absolute bottom-0 left-6 translate-y-full w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-white dark:border-t-gray-800"></div>
-          </motion.div>
-
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -221,11 +213,12 @@ export function Hero() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="w-[15%] relative overflow-hidden"
+          onClick={toggleCatMessage}
         >
           <motion.div
             animate={{ y: [0, -20, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute inset-0 flex items-center justify-start"
+            className="absolute inset-0 flex items-center justify-start cursor-pointer"
           >
             <Image
               src="/images/gato-sentado.webp"
@@ -237,6 +230,19 @@ export function Hero() {
               priority
             />
           </motion.div>
+
+          {/* Cat Speech Bubble - Next to cat on click */}
+          {showCatMessage && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, x: 20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.8, x: 20 }}
+              className="absolute top-1/4 left-full ml-2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-xl shadow-xl text-xs border-2 border-gray-200 dark:border-gray-700 w-48 z-30"
+            >
+              <p className="font-medium">{t('catMessage')}</p>
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-white dark:border-r-gray-800"></div>
+            </motion.div>
+          )}
         </motion.div>
       </div>
 

@@ -15,7 +15,7 @@ export function Curiosities() {
     <section
       id="curiosities"
       ref={ref}
-      className="min-h-screen max-h-screen overflow-y-auto py-20 px-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-900"
+      className="py-20 px-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-800 dark:to-gray-900"
     >
       <div className="container mx-auto">
         <motion.h2

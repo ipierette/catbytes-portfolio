@@ -1,14 +1,15 @@
 'use client'
 
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { 
-  SiHtml5, SiCss3, SiJavascript, SiReact, SiNextdotjs, 
-  SiTypescript, SiTailwindcss, SiNodedotjs, SiPostgresql, 
-  SiGit, SiPython, SiFigma 
+import {
+  SiHtml5, SiCss3, SiJavascript, SiReact, SiNextdotjs,
+  SiTypescript, SiTailwindcss, SiNodedotjs, SiPostgresql,
+  SiGit, SiPython, SiFigma
 } from 'react-icons/si'
-import { FaBook } from 'react-icons/fa'
+import { FaBook, FaInfoCircle } from 'react-icons/fa'
+import { X } from 'lucide-react'
 
 const skillsData = [
   { name: 'HTML5', level: 95, color: 'from-orange-500 to-orange-600', icon: SiHtml5, iconColor: 'text-orange-500' },
@@ -29,6 +30,7 @@ export function Skills() {
   const t = useTranslations('skills')
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, amount: 0.2 })
+  const [showOffCanvas, setShowOffCanvas] = useState(false)
 
   const getLevelLabel = (level: number) => {
     if (level <= 40) return 'Ronronado Iniciante'
@@ -41,7 +43,7 @@ export function Skills() {
     <section
       id="skills"
       ref={ref}
-      className="min-h-screen max-h-screen overflow-y-auto py-20 px-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900"
+      className="py-20 px-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900"
     >
       <div className="container mx-auto">
         <motion.h2
@@ -104,64 +106,110 @@ export function Skills() {
           })}
         </motion.div>
 
-        {/* Níveis de Miado Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.6 }}
-          className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
+        {/* Floating Button to Open Off-Canvas */}
+        <button
+          onClick={() => setShowOffCanvas(true)}
+          className="fixed right-0 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-2 py-6 md:px-3 md:py-8 rounded-l-2xl shadow-2xl z-40 flex flex-col items-center gap-3 transition-all duration-300 hover:scale-105"
+          aria-label="Ver Níveis de Miado"
+          style={{ writingMode: 'vertical-rl' }}
         >
-          <h3 className="text-2xl font-comfortaa font-bold text-center mb-6 text-purple-600 dark:text-purple-400">
-            {t('levels.title')}
-          </h3>
-          
-          <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
-            {t('levels.intro')}
-          </p>
+          <FaInfoCircle className="w-5 h-5 md:w-6 md:h-6" style={{ writingMode: 'horizontal-tb' }} />
+          <span className="text-xs md:text-sm font-bold">
+            Níveis de Miado
+          </span>
+        </button>
 
-          <ul className="space-y-4">
-            <li className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-              <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">B</span>
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Ronronado Iniciante (Básico):</strong>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{t('levels.beginner')}</p>
-              </div>
-            </li>
-            <li className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">I</span>
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Miado Intermediário (Mediano):</strong>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{t('levels.intermediate')}</p>
-              </div>
-            </li>
-            <li className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-              <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl font-bold text-green-600 dark:text-green-400">A</span>
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Gato Mestre (Avançado):</strong>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{t('levels.advanced')}</p>
-              </div>
-            </li>
-            <li className="flex items-start gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-              <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/40 flex items-center justify-center flex-shrink-0">
-                <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">E</span>
-              </div>
-              <div>
-                <strong className="text-gray-900 dark:text-white">Miaucódigo Mestre (Especialista):</strong>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{t('levels.expert')}</p>
-              </div>
-            </li>
-          </ul>
+        {/* Off-Canvas Sidebar */}
+        <AnimatePresence>
+          {showOffCanvas && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowOffCanvas(false)}
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              />
 
-          <p className="mt-6 text-center italic text-gray-600 dark:text-gray-400">
-            {t('levels.conclusion')}
-          </p>
-        </motion.div>
+              {/* Off-Canvas Panel */}
+              <motion.div
+                initial={{ x: '100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '100%' }}
+                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                className="fixed right-0 top-0 h-full w-full md:w-[500px] bg-white dark:bg-gray-800 shadow-2xl z-50 overflow-y-auto"
+              >
+                {/* Header */}
+                <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-purple-700 text-white p-6 flex items-center justify-between z-10">
+                  <div className="flex items-center gap-3">
+                    <FaBook className="w-6 h-6" />
+                    <h3 className="text-2xl font-comfortaa font-bold">
+                      {t('levels.title')}
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setShowOffCanvas(false)}
+                    className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                    aria-label="Fechar"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 md:p-8">
+                  <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed text-base">
+                    {t('levels.intro')}
+                  </p>
+
+                  <ul className="space-y-4">
+                    <li className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border-l-4 border-purple-600">
+                      <div className="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl font-bold text-purple-600 dark:text-purple-400">B</span>
+                      </div>
+                      <div>
+                        <strong className="text-gray-900 dark:text-white text-base">Ronronado Iniciante (Básico):</strong>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{t('levels.beginner')}</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-600">
+                      <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">I</span>
+                      </div>
+                      <div>
+                        <strong className="text-gray-900 dark:text-white text-base">Miado Intermediário (Mediano):</strong>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{t('levels.intermediate')}</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border-l-4 border-green-600">
+                      <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl font-bold text-green-600 dark:text-green-400">A</span>
+                      </div>
+                      <div>
+                        <strong className="text-gray-900 dark:text-white text-base">Gato Mestre (Avançado):</strong>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{t('levels.advanced')}</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border-l-4 border-yellow-600">
+                      <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/40 flex items-center justify-center flex-shrink-0">
+                        <span className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">E</span>
+                      </div>
+                      <div>
+                        <strong className="text-gray-900 dark:text-white text-base">Miaucódigo Mestre (Especialista):</strong>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">{t('levels.expert')}</p>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <p className="mt-6 text-center italic text-gray-600 dark:text-gray-400">
+                    {t('levels.conclusion')}
+                  </p>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   )
