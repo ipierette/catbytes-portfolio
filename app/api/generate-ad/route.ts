@@ -124,11 +124,13 @@ export async function POST(request: NextRequest) {
 
     const GEMINI_KEY = process.env.GEMINI_API_KEY
     if (!GEMINI_KEY) {
+      console.error('GEMINI_API_KEY não configurada')
       return NextResponse.json(
-        { error: 'Configuração de API ausente' },
+        { error: 'Configuração de API ausente. Verifique as variáveis de ambiente.' },
         { status: 500 }
       )
     }
+    console.log('GEMINI_API_KEY encontrada:', GEMINI_KEY.substring(0, 10) + '...')
 
     const body: GenerateAdRequest = await request.json()
     const { description } = body

@@ -407,13 +407,12 @@ function DonateCatForm() {
         body: JSON.stringify({ description })
       })
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: 'Erro desconhecido' }))
-        throw new Error(errorData.error || errorData.details || `Erro ${response.status}`)
-      }
-
       const data = await response.json()
-      console.log('Response data:', data)
+      console.log('API Response:', { status: response.status, data })
+
+      if (!response.ok) {
+        throw new Error(data.error || data.details || `Erro ${response.status}`)
+      }
 
       if (!data.data) {
         throw new Error('Resposta inválida da API')

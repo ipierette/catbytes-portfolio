@@ -10,31 +10,31 @@ import { ExternalLink, Github, ChevronLeft, ChevronRight } from 'lucide-react'
 const projectsData = [
   {
     id: 'meowflix',
-    image: 'https://placehold.co/600x400/8A2BE2/FFFFFF?text=MeowFlix+IA',
+    image: '/images/meowflixia.png',
     link: '#',
     github: '#'
   },
   {
     id: 'catbutler',
-    image: 'https://placehold.co/600x400/00BFFF/FFFFFF?text=CATButler',
+    image: '/images/catbutler.png',
     link: '#',
     github: '#'
   },
   {
     id: 'chatbot',
-    image: 'https://placehold.co/600x400/2E8B57/FFFFFF?text=ChatBot+IA',
+    image: '/images/chatbot.webp',
     link: '#',
     github: '#'
   },
   {
     id: 'agent',
-    image: 'https://placehold.co/600x400/FF8C00/FFFFFF?text=Agente+IA',
+    image: '/images/demo-agente.png',
     link: '#',
     github: '#'
   },
   {
     id: 'medical',
-    image: 'https://placehold.co/600x400/FF69B4/FFFFFF?text=Site+Médico',
+    image: '/images/simples-medico.png',
     link: '#',
     github: '#'
   }
@@ -81,7 +81,6 @@ export function Projects() {
                 alt={t(`items.${currentProject.id}.title`)}
                 fill
                 className="object-cover rounded-lg"
-                unoptimized
               />
             </div>
 
