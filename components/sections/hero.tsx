@@ -127,14 +127,14 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Mobile Layout - Baseado no CSS Original */}
-      <div className="md:hidden relative w-full h-full z-10 grid grid-cols-2 gap-4 px-4 items-end pb-16">
-        {/* Left: Text Content */}
+      {/* Mobile Layout - Simples e Profissional */}
+      <div className="md:hidden w-full min-h-screen flex items-center justify-between px-4 py-20 z-10">
+        {/* Left: Text Content (55%) */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col justify-self-end self-center space-y-3 pb-8 max-w-xs"
+          className="w-[55%] flex flex-col space-y-4 pr-2"
         >
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -153,27 +153,44 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed"
+            className="text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"
           >
             {t('subtitle')}
           </motion.p>
+
+          {/* GitHub Stats - Mobile (2 items only) */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="flex flex-col gap-2 max-w-[120px]"
+          >
+            <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200 dark:border-gray-700 shadow-md">
+              <p className="text-sm font-bold text-catbytes-purple dark:text-catbytes-pink">250+</p>
+              <p className="text-[9px] text-gray-600 dark:text-gray-400">Commits</p>
+            </div>
+            <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg p-2 border border-gray-200 dark:border-gray-700 shadow-md">
+              <p className="text-sm font-bold text-catbytes-blue">18</p>
+              <p className="text-[9px] text-gray-600 dark:text-gray-400">Repos</p>
+            </div>
+          </motion.div>
         </motion.div>
 
-        {/* Right: Cat Image */}
+        {/* Right: Cat Image (45%) */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="relative justify-self-center self-end"
+          className="w-[45%] flex items-end justify-end"
           onTouchStart={() => setShowCatMessage(true)}
           onTouchEnd={() => setShowCatMessage(false)}
         >
-          <div className="relative w-[270px] h-auto">
+          <div className="relative w-full max-w-[200px]">
             <Image
               src="/images/gato-sentado.webp"
               alt="Axel - Mascote CatBytes"
-              width={270}
-              height={270}
+              width={200}
+              height={300}
               className="w-full h-auto drop-shadow-2xl"
               priority
             />
@@ -187,7 +204,7 @@ export function Hero() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.3 }}
-                className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-4 py-3 rounded-b-2xl shadow-2xl text-xs border-2 border-gray-200 dark:border-gray-700 z-[1050] text-center"
+                className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-4 py-3 rounded-b-2xl shadow-2xl text-xs border-b-2 border-gray-200 dark:border-gray-700 z-[1050] text-center mx-auto"
               >
                 <p className="font-medium">{t('catMessage')}</p>
               </motion.div>
