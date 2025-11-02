@@ -10,6 +10,10 @@ node_modules
 dist
 dist-ssr
 
+# Next.js build output
+.next
+out
+
 # Arquivos de ambiente - NUNCA comitar chaves de API!
 .env
 .env.local
