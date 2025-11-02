@@ -131,10 +131,10 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Mobile Layout - Cat Silhouette on Right (15%) */}
+      {/* Mobile Layout - Cat Silhouette on Right (30%) */}
       <div className="md:hidden relative w-full min-h-screen z-10 flex">
-        {/* Left Side: Text Content (85%) */}
-        <div className="w-[85%] px-4 py-12 flex flex-col justify-center relative z-20">
+        {/* Left Side: Text Content (70%) */}
+        <div className="w-[70%] px-4 py-12 flex flex-col justify-center relative z-20">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -207,12 +207,12 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* Right Side: Cat Silhouette (15%) - Vertically Cropped */}
+        {/* Right Side: Cat Silhouette (30%) - Showing eye */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="w-[15%] relative overflow-hidden"
+          className="w-[30%] relative overflow-hidden max-h-[85vh]"
           onClick={toggleCatMessage}
         >
           <motion.div
@@ -223,24 +223,24 @@ export function Hero() {
             <Image
               src="/images/gato-sentado.webp"
               alt="Axel - Mascote CatBytes"
-              width={200}
+              width={300}
               height={400}
-              className="h-full w-auto object-cover object-left drop-shadow-2xl"
-              style={{ minHeight: '100%' }}
+              className="h-full w-auto object-cover object-center drop-shadow-2xl"
+              style={{ minHeight: '100%', objectPosition: '35% center' }}
               priority
             />
           </motion.div>
 
-          {/* Cat Speech Bubble - Next to cat on click */}
+          {/* Cat Speech Bubble - Left of cat on click */}
           {showCatMessage && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, x: 20 }}
+              initial={{ opacity: 0, scale: 0.8, x: -10 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.8, x: 20 }}
-              className="absolute top-1/4 left-full ml-2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-xl shadow-xl text-xs border-2 border-gray-200 dark:border-gray-700 w-48 z-30"
+              exit={{ opacity: 0, scale: 0.8, x: -10 }}
+              className="absolute top-1/4 right-full mr-2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-3 py-2 rounded-xl shadow-xl text-xs border-2 border-gray-200 dark:border-gray-700 w-44 z-30"
             >
               <p className="font-medium">{t('catMessage')}</p>
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-white dark:border-r-gray-800"></div>
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full w-0 h-0 border-t-8 border-b-8 border-l-8 border-transparent border-l-white dark:border-l-gray-800"></div>
             </motion.div>
           )}
         </motion.div>
