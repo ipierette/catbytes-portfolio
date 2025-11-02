@@ -95,22 +95,6 @@ Se faltar algum dado, assuma de forma realista e deixe claro no texto.
 Retorne SOMENTE o JSON.`
 }
 
-function tryParseJSON(str: string): any | null {
-  try {
-    return JSON.parse(str)
-  } catch {}
-
-  const a = str.indexOf("{")
-  const b = str.lastIndexOf("}")
-  if (a !== -1 && b !== -1 && b > a) {
-    try {
-      return JSON.parse(str.slice(a, b + 1))
-    } catch {}
-  }
-
-  return null
-}
-
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting
@@ -122,15 +106,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const GEMINI_KEY = process.env.GEMINI_API_KEY
-    if (!GEMINI_KEY) {
-      console.error('GEMINI_API_KEY não configurada')
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+    if (!OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY não configurada')
       return NextResponse.json(
-        { error: 'Configuração de API ausente. Verifique as variáveis de ambiente.' },
+        { error: 'Configuração de API ausente. Verifique OPENAI_API_KEY nas variáveis de ambiente.' },
         { status: 500 }
       )
     }
-    console.log('GEMINI_API_KEY encontrada:', GEMINI_KEY.substring(0, 10) + '...')
+    console.log('OPENAI_API_KEY encontrada:', OPENAI_API_KEY.substring(0, 10) + '...')
 
     const body: GenerateAdRequest = await request.json()
     const { description } = body
@@ -150,44 +134,64 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true, data: cached, cached: true })
     }
 
-    console.log('Gerando anúncio com Gemini...')
+    console.log('Gerando anúncio com OpenAI...')
 
-    // Call Gemini API
+    // Call OpenAI API
     const requestBody = {
-      contents: [{
-        role: "user",
-        parts: [{ text: makePrompt(description) }]
-      }]
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'Você é um especialista em criar anúncios de adoção de gatos. Sempre responda com JSON válido.'
+        },
+        {
+          role: 'user',
+          content: makePrompt(description)
+        }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.7,
+      max_tokens: 2000
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+      'https://api.openai.com/v1/chat/completions',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(requestBody),
-        signal: AbortSignal.timeout(20000) // 20s timeout para geração de texto
+        signal: AbortSignal.timeout(30000) // 30s timeout para geração de texto
       }
     )
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
-      console.error('Gemini API error:', response.status, errorData)
-      throw new Error(`Gemini API falhou: ${response.status} - ${JSON.stringify(errorData)}`)
+      console.error('OpenAI API error:', response.status, errorData)
+      throw new Error(`OpenAI API falhou: ${response.status} - ${JSON.stringify(errorData)}`)
     }
 
     const data = await response.json()
-    console.log('Gemini response:', JSON.stringify(data).substring(0, 500))
+    console.log('OpenAI response:', JSON.stringify(data).substring(0, 500))
 
-    const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || ""
+    const text = data?.choices?.[0]?.message?.content || ""
 
     if (!text) {
       console.error('No text in response:', data)
-      throw new Error('Gemini retornou resposta vazia')
+      throw new Error('OpenAI retornou resposta vazia')
     }
 
     console.log('Generated text:', text.substring(0, 200))
-    const parsedData = tryParseJSON(text) ?? { raw: text }
+
+    let parsedData
+    try {
+      parsedData = JSON.parse(text)
+    } catch (e) {
+      console.error('Failed to parse JSON:', text)
+      parsedData = { raw: text }
+    }
 
     // Cache the result
     setCache(cacheKey, parsedData)

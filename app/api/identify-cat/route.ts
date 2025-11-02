@@ -61,10 +61,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const GEMINI_KEY = process.env.GEMINI_API_KEY
-    if (!GEMINI_KEY) {
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+    if (!OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY não configurada')
       return NextResponse.json(
-        { error: 'Configuração de API ausente' },
+        { error: 'Configuração de API ausente. Verifique OPENAI_API_KEY nas variáveis de ambiente.' },
         { status: 500 }
       )
     }
@@ -94,48 +95,67 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ...cached, cached: true })
     }
 
-    console.log('Analisando imagem com Gemini...')
+    console.log('Analisando imagem com OpenAI Vision...')
 
-    // Call Gemini API
-    const body = {
-      contents: [{
-        role: "user",
-        parts: [
-          { inlineData: { mimeType, data: base64Data } },
-          {
-            text: 'Responda em pt-BR. Analise esta foto de gato e retorne SOMENTE JSON (sem Markdown) ' +
-                  'exatamente neste formato: ' +
-                  '{"idade":"~X meses/anos (intervalo)","racas":["..."],"personalidade":["..."],"observacoes":"..."} ' +
-                  'Seja breve e conservador nas estimativas. Se não for um gato, diga {"observacoes":"imagem sem gato."}'
-          }
-        ]
-      }]
+    // Call OpenAI Vision API
+    const requestBody = {
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'Você é um especialista em identificar gatos. Sempre responda com JSON válido em português brasileiro.'
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType};base64,${base64Data}`,
+                detail: 'auto'
+              }
+            },
+            {
+              type: 'text',
+              text: 'Analise esta foto de gato e retorne SOMENTE JSON exatamente neste formato: {"idade":"~X meses/anos (intervalo)","racas":["raça1","raça2"],"personalidade":["traço1","traço2"],"observacoes":"observações gerais"} Seja breve e conservador nas estimativas. Se não for um gato, retorne {"observacoes":"imagem sem gato."}'
+            }
+          ]
+        }
+      ],
+      response_format: { type: 'json_object' },
+      max_tokens: 500
     }
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+      'https://api.openai.com/v1/chat/completions',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(15000) // 15s timeout para análise de imagem
+        headers: {
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody),
+        signal: AbortSignal.timeout(20000) // 20s timeout para análise de imagem
       }
     )
 
     if (!response.ok) {
-      const errorData = await response.json()
-      console.error('Gemini API error:', errorData)
-      throw new Error('Falha ao chamar Gemini API')
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+      console.error('OpenAI API error:', response.status, errorData)
+      throw new Error(`OpenAI API falhou: ${response.status}`)
     }
 
     const data = await response.json()
-    const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || ""
+    const text = data?.choices?.[0]?.message?.content || ""
+
+    console.log('OpenAI response text:', text.substring(0, 200))
 
     // Parse JSON response
     let parsed: any
     try {
       parsed = JSON.parse(text)
     } catch {
+      console.error('Failed to parse JSON:', text)
       const regex = /\{[\s\S]*\}/
       const match = regex.exec(text)
       parsed = match ? JSON.parse(match[0]) : { observacoes: text || "sem dados" }
@@ -160,7 +180,7 @@ export async function POST(request: NextRequest) {
       idade: parsed.idade || parsed.age || "--",
       racas,
       personalidade,
-      observacoes: parsed.observacoes || parsed.notes || "",
+      observacoes: parsed.observacoes || parsed.notes || parsed.observações || "",
     }
 
     // Cache the result

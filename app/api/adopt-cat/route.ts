@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 
 // Cache simples em memória (em produção, use Redis/Vercel KV)
 const cache = new Map<string, { data: any; timestamp: number }>()
@@ -92,11 +91,11 @@ function setCache(key: string, data: any): void {
   cache.set(key, { data, timestamp: Date.now() })
 }
 
-// AI Scoring com Gemini
+// AI Scoring com OpenAI
 async function getAIScore(
   anuncio: AdResult,
   searchParams: AdoptRequest,
-  geminiKey: string
+  openaiKey: string
 ): Promise<AIScore> {
   const { titulo, descricao, fonte } = anuncio
   const { color, localizacao } = searchParams
@@ -123,26 +122,56 @@ REGRAS:
 - Suspeita de venda ou vago: nota baixa (1-4)`
 
   try {
-    const genAI = new GoogleGenerativeAI(geminiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
-
-    const result = await model.generateContent(prompt)
-    const text = result.response.text()
-
-    // Extrai JSON da resposta
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0])
-      return {
-        score: Math.max(1, Math.min(10, parsed.score || 5)),
-        reason: parsed.reason || 'Análise da IA',
-        is_adopted: !!parsed.is_adopted
-      }
+    const requestBody = {
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: 'system',
+          content: 'Você é um especialista em avaliar anúncios de adoção de gatos. Sempre responda com JSON válido.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      response_format: { type: 'json_object' },
+      max_tokens: 300
     }
 
-    return { score: 5, reason: 'Resposta da IA não compreendida', is_adopted: false }
+    const response = await fetch(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${openaiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody),
+        signal: AbortSignal.timeout(10000) // 10s timeout
+      }
+    )
+
+    if (!response.ok) {
+      console.error('OpenAI API error:', response.status)
+      return { score: 5, reason: 'Erro na análise IA', is_adopted: false }
+    }
+
+    const data = await response.json()
+    const text = data?.choices?.[0]?.message?.content || ""
+
+    if (!text) {
+      return { score: 5, reason: 'Resposta da IA vazia', is_adopted: false }
+    }
+
+    // Parse JSON response
+    const parsed = JSON.parse(text)
+    return {
+      score: Math.max(1, Math.min(10, parsed.score || 5)),
+      reason: parsed.reason || 'Análise da IA',
+      is_adopted: !!parsed.is_adopted
+    }
   } catch (error) {
-    console.error('Erro ao chamar Gemini:', error)
+    console.error('Erro ao chamar OpenAI:', error)
     return { score: 5, reason: 'Erro na análise IA', is_adopted: false }
   }
 }
@@ -183,7 +212,7 @@ export async function POST(request: NextRequest) {
     }
 
     const SERPAPI_KEY = process.env.SERPAPI_KEY
-    const GEMINI_KEY = process.env.GEMINI_API_KEY
+    const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 
     if (!SERPAPI_KEY) {
       return NextResponse.json(
@@ -267,12 +296,12 @@ export async function POST(request: NextRequest) {
     }
 
     // AI Scoring (limita a 6 para performance)
-    if (GEMINI_KEY && anuncios.length > 0) {
+    if (OPENAI_API_KEY && anuncios.length > 0) {
       const adsForAI = anuncios.slice(0, 6)
       console.log(`Analisando ${adsForAI.length} anúncios com IA`)
 
       const scoringPromises = adsForAI.map((ad: AdResult) =>
-        getAIScore(ad, body, GEMINI_KEY).catch(() => ({
+        getAIScore(ad, body, OPENAI_API_KEY).catch(() => ({
           score: 5,
           reason: 'Erro na análise',
           is_adopted: false
