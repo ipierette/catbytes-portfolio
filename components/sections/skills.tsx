@@ -41,7 +41,7 @@ export function Skills() {
     <section
       id="skills"
       ref={ref}
-      className="py-20 px-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900"
+      className="min-h-screen max-h-screen overflow-y-auto py-20 px-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900"
     >
       <div className="container mx-auto">
         <motion.h2

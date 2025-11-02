@@ -24,7 +24,7 @@ export function About() {
     <section
       id="about"
       ref={ref}
-      className="py-20 px-4 bg-gray-50 dark:bg-gray-900"
+      className="min-h-screen max-h-screen overflow-y-auto py-20 px-4 bg-gray-50 dark:bg-gray-900"
     >
       <div className="container mx-auto">
         <motion.h2

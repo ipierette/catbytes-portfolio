@@ -25,7 +25,7 @@ export function Contact() {
   ]
 
   return (
-    <section id="contact" ref={ref} className="py-20 px-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
+    <section id="contact" ref={ref} className="min-h-screen max-h-screen overflow-y-auto py-20 px-4 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
       <div className="container mx-auto max-w-2xl">
         <motion.h2
           initial={{ opacity: 0, y: 50 }}

@@ -79,7 +79,7 @@ export function Projects() {
   const currentProject = projectsData[currentIndex]
 
   return (
-    <section id="projects" ref={ref} className="py-20 px-4 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900">
+    <section id="projects" ref={ref} className="min-h-screen max-h-screen overflow-y-auto py-20 px-4 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900">
       <div className="container mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 50 }}

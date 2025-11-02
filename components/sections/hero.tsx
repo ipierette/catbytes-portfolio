@@ -15,13 +15,13 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-end justify-center overflow-hidden bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 pt-20 pb-0"
+      className="relative min-h-screen max-h-screen flex items-end justify-center overflow-hidden bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-slate-950 dark:via-slate-900 dark:to-blue-950 pt-20 pb-0"
     >
       {/* Background Particles Effect */}
       <AnimatedParticles />
 
       {/* Desktop and Tablet Layout */}
-      <div className="hidden md:grid container mx-auto px-4 z-10 md:grid-cols-2 gap-12 h-screen">
+      <div className="hidden md:grid container mx-auto px-4 z-10 md:grid-cols-2 gap-12 h-full max-h-full">
         {/* Text Content - Vertically Centered */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
@@ -128,44 +128,32 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* Mobile Layout - Diagonal Overlay Design */}
-      <div className="md:hidden relative w-full h-full z-10 px-4 py-8 flex items-center">
-        {/* Cat Image - Large Background Element (bottom-right) */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, x: 100 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 1, delay: 0.3 }}
-          className="absolute bottom-0 right-0 w-72 h-72 pointer-events-none"
-        >
+      {/* Mobile Layout - Cat Silhouette on Right (15%) */}
+      <div className="md:hidden relative w-full h-full z-10 flex">
+        {/* Left Side: Text Content (85%) */}
+        <div className="w-[85%] px-4 py-12 flex flex-col justify-center relative z-20">
+          {/* Cat Speech Bubble - Top Left */}
           <motion.div
-            animate={{ y: [0, -20, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            className="relative w-full h-full"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.5, duration: 0.8 }}
+            className="absolute top-4 left-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-4 py-3 rounded-2xl shadow-xl text-xs border-2 border-gray-200 dark:border-gray-700 max-w-[200px]"
           >
-            <Image
-              src="/images/gato-sentado.webp"
-              alt="Axel - Mascote CatBytes"
-              fill
-              className="object-contain object-bottom-right drop-shadow-2xl opacity-90"
-              priority
-            />
+            <p className="font-medium">{t('catMessage')}</p>
+            <div className="absolute bottom-0 left-6 translate-y-full w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-white dark:border-t-gray-800"></div>
           </motion.div>
-        </motion.div>
 
-        {/* Content Card with Frosted Glass Effect */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-20 max-w-sm"
-        >
-          {/* Main Text Content Card */}
-          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl rounded-3xl p-6 shadow-2xl border-2 border-gray-200/50 dark:border-gray-700/50">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-4"
+          >
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-2xl sm:text-3xl font-comfortaa font-bold leading-tight text-gray-900 dark:text-white mb-3"
+              className="text-2xl sm:text-3xl font-comfortaa font-bold leading-tight text-gray-900 dark:text-white"
             >
               {t('title')}
               <br />
@@ -178,7 +166,7 @@ export function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-4"
+              className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
             >
               {t('subtitle')}
             </motion.p>
@@ -188,7 +176,7 @@ export function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8, duration: 0.8 }}
-              className="text-base sm:text-lg font-bold mb-4"
+              className="text-base sm:text-lg font-bold"
             >
               <TypeAnimation
                 sequence={[
@@ -208,33 +196,46 @@ export function Hero() {
               />
             </motion.div>
 
-            {/* Compact Stats Grid */}
+            {/* Compact Stats */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 0.5 }}
-              className="grid grid-cols-2 gap-2"
+              className="grid grid-cols-2 gap-2 max-w-xs"
             >
-              <div className="bg-gradient-to-br from-catbytes-purple/10 to-catbytes-pink/10 dark:from-catbytes-purple/20 dark:to-catbytes-pink/20 rounded-xl p-3 border border-catbytes-purple/30 dark:border-catbytes-purple/50">
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-3 border border-gray-200 dark:border-gray-700 shadow-lg">
                 <p className="text-lg font-bold text-catbytes-purple dark:text-catbytes-pink">250+</p>
                 <p className="text-xs text-gray-600 dark:text-gray-400">Commits</p>
               </div>
-              <div className="bg-gradient-to-br from-catbytes-blue/10 to-catbytes-purple/10 dark:from-catbytes-blue/20 dark:to-catbytes-purple/20 rounded-xl p-3 border border-catbytes-blue/30 dark:border-catbytes-blue/50">
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-3 border border-gray-200 dark:border-gray-700 shadow-lg">
                 <p className="text-lg font-bold text-catbytes-blue">18</p>
                 <p className="text-xs text-gray-600 dark:text-gray-400">Repos</p>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
+        </div>
 
-          {/* Cat Speech Bubble - Floating near cat */}
+        {/* Right Side: Cat Silhouette (15%) - Vertically Cropped */}
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="w-[15%] relative overflow-hidden"
+        >
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
-            className="absolute -bottom-16 right-0 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-4 py-3 rounded-2xl shadow-xl text-xs border-2 border-gray-200 dark:border-gray-700 max-w-[180px]"
+            animate={{ y: [0, -20, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute inset-0 flex items-center justify-start"
           >
-            <p className="font-medium">{t('catMessage')}</p>
-            <div className="absolute top-0 right-8 -translate-y-full w-0 h-0 border-l-8 border-r-8 border-b-8 border-transparent border-b-white dark:border-b-gray-800"></div>
+            <Image
+              src="/images/gato-sentado.webp"
+              alt="Axel - Mascote CatBytes"
+              width={200}
+              height={400}
+              className="h-full w-auto object-cover object-left drop-shadow-2xl"
+              style={{ minHeight: '100%' }}
+              priority
+            />
           </motion.div>
         </motion.div>
       </div>
